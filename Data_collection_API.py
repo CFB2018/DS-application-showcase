@@ -12,9 +12,9 @@ import pandas as pd # data manipulation
 import numpy as np # numerical operations
 import datetime
 
-# Set this option will print all columns of a dataframe
+# Print all columns of a data frame
 pd.set_option('display.max_columns', None)
-# Setting this option will print all of the data in a feature
+# Print all of the data in a feature
 pd.set_option('display.max_colwidth', None)
 
 # FUNCTIONS FOR DATA COLLECTION
