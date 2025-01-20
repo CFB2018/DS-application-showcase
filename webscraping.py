@@ -1,10 +1,3 @@
-
-'''
-Objective: Web scrap Falcon 9 launch records HTML table from Wikipedia
-Parse the table and convert it into a data frame
-
-'''
-# Necessary libraries
 import sys
 import requests
 from bs4 import BeautifulSoup
@@ -12,43 +5,47 @@ import re
 import unicodedata
 import pandas as pd
 
-# This function returns the data and time from the HTML table cell
 def date_time(table_cells):
-    return [data_time.strip() for data_time in list(table_cells.strings)][0:2]
+    return [data_time.strip() for data_time in list(table_cells.strings) if data_time.strip()][:2]
 
-# This function returns the booster version from the HTML table cell 
 def booster_version(table_cells):
-    out=''.join([booster_version for i,booster_version in enumerate( table_cells.strings) if i%2==0][0:-1])
+    out = ''.join([booster_version for i, booster_version in enumerate(table_cells.strings) if i % 2 == 0 and booster_version.strip()][:1])
     return out
 
-# This function returns the landing status from the HTML table cell 
 def landing_status(table_cells):
-    out=[i for i in table_cells.strings][0]
+    out = [i for i in table_cells.strings if i.strip()][0]
     return out
 
 def get_mass(table_cells):
-    mass=unicodedata.normalize("NFKD", table_cells.text).strip()
-    if mass:
-        mass.find("kg")
-        new_mass=mass[0:mass.find("kg")+2]
+    mass = unicodedata.normalize("NFKD", table_cells.text).strip()
+    if mass and "kg" in mass:
+        new_mass = mass[:mass.find("kg") + 2]
     else:
-        new_mass=0
+        new_mass = 0
     return new_mass
 
-# This function returns the landing status from the HTML table cell 
 def extract_column_from_header(row):
-    #If a <br> tag exists in the row, remove it
-    if (row.br):
-    #If an <a> (anchor tag exists in the row, remove it
+    if row.br:
         row.br.extract()
     if row.a:
         row.a.extract()
     if row.sup:
         row.sup.extract()
         
-    column_name = ' '.join(row.contents) # join the contents into a string separated by space
-    column_name = column_name.strip() # remove trailing whitespace
+    column_name = ' '.join([content.strip() for content in row.contents if content.strip()]) 
+    column_name = column_name.strip() 
     
-    # Filter the digit and empty names
-    if not column_name.isdigit(): #ignore column name if its purely numeric
+    if not column_name.isdigit(): 
         return column_name    
+
+static_url = "https://en.wikipedia.org/w/index.php?title=List_of_Falcon_9_and_Falcon_Heavy_launches&oldid=1027686922"
+response = requests.get(static_url)
+
+if response.status_code == 200:
+    soup = BeautifulSoup(response.content, "html.parser")
+    print("Page Title: ", soup.title.string) 
+    
+    html_tables = soup.find_all("table")
+    print("Number of tables found: {}".format(len(html_tables)))
+else:
+    print("Failed to retrieve data: {}".format(response.status_code))
