@@ -1,9 +1,9 @@
 
 '''
 ### Complete the Data Collection API Lab ###
-Data is collected from the SpaceX API to analyze Falcon 9 rocket launches.
-Objective: To predict if the Falcon 9 rocket lands successfully based on various features.
 
+Objective: To predict if the Falcon 9 rocket lands successfully based on various features.
+Data is collected from the SpaceX API to analyze Falcon 9 rocket launches.
 '''
 
 # Import necessary libraries
@@ -12,7 +12,7 @@ import pandas as pd # data manipulation
 import numpy as np # numerical operations
 import datetime
 
-# Setting this option will print all columns of a dataframe
+# Set this option will print all columns of a dataframe
 pd.set_option('display.max_columns', None)
 # Setting this option will print all of the data in a feature
 pd.set_option('display.max_colwidth', None)
@@ -73,20 +73,19 @@ response = requests.get(spacex_url)
 # Decode the response as a Json using .json() and turn it into a Pandas df using .json_normalize
 data = response.json()
 
-# It normalizes the JSON response into a pandas DataFrame and selects relevant columns.
+# Normalizes the JSON response into a DataFrame and selects relevant columns.
 data = pd.json_normalize(data)
 #print(data.head())
 
-# Lets take a subset of our dataframe keeping only the features we want and the flight number, and date_utc.
+# Select a subset from the dataframe and keep only some the features and the flight number, and date_utc.
 data = data[['rocket', 'payloads', 'launchpad', 'cores', 'flight_number', 'date_utc']]
 
-# We will remove rows with multiple cores because those are falcon rockets with 2 extra rocket boosters and rows that have multiple payloads in a single rocket.
+# Remove rows with multiple cores because those are falcon rockets with 2 extra rocket boosters and rows that have multiple payloads in a single rocket.
 data = data[data['cores'].map(len)==1]
 data = data[data['payloads'].map(len)==1]
 print(data.head())
 
-
-# Filters out launches with multiple cores or payloads, ensuring that only single-core, single-payload launches are analyzed.
+# Filter out launches with multiple cores or payloads, ensuring that only single-core, single-payload launches are analyzed.
 data['cores'] = data['cores'].map(lambda x : x[0])
 data['payloads'] = data['payloads'].map(lambda x : x[0])
 
@@ -127,7 +126,7 @@ getCoreData(data)
 
 # DATAFRAME CONSTRUCTION
 # A pandas DataFrame (launch_df) is created from this dictionary, 
-# which can be used for further analysis or modeling.
+# which can be used for further analysis.
 launch_dict = {'FlightNumber': list(data['flight_number']),
 'Date': list(data['date']),
 'BoosterVersion':BoosterVersion,
@@ -146,7 +145,7 @@ launch_dict = {'FlightNumber': list(data['flight_number']),
 'Longitude': Longitude,
 'Latitude': Latitude}
 
-# Create a Pandas data frame from the dictionary launch-dict
+# Create a data frame from the dictionary launch_dict
 launch_df = pd.DataFrame(launch_dict)
 print(launch_df.head())
 
@@ -166,11 +165,10 @@ data_falcon9 = launch_df[launch_df['BoosterVersion'] != 'Falcon 1']
 
 # Reset the FlightNumber column
 data_falcon9.loc[:, 'FlightNumber'] = list(range(1, data_falcon9.shape[0] + 1))
-
-# Display the updated DataFrame
 print(data_falcon9.head())
 
 # DATA WRANGLING
+# Check the total missing values
 data_falcon9.isnull().sum()
 
 # Calculate the mean value of the PayloadMass column
@@ -181,11 +179,6 @@ print(f"Mean PayloadMass: {mean_payload_mass}")
 
 # Replace the np.nan values in the PayloadMass column with the mean value
 data_falcon9['PayloadMass'] = data_falcon9['PayloadMass'].replace(np.nan, mean_payload_mass)
-
-# Alternatively, you can use fillna() which is often more straightforward
-# data_falcon9['PayloadMass'] = data_falcon9['PayloadMass'].fillna(mean_payload_mass)
-
-# Display the updated DataFrame to verify the changes
 print(data_falcon9.head())
 
 # Export to a CSV file for further analysis in part 2.
