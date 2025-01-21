@@ -17,5 +17,5 @@ import csv, sqlite3
 import prettytable
 prettytable.DEFAULT = 'DEFAULT'
 
-con = sqlite3.connect("my_data1.db")
+con = sqlite3.connect("spaceX-data.db")
 cur = con.cursor()
