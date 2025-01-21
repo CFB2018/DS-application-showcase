@@ -49,3 +49,4 @@ if response.status_code == 200:
     print("Number of tables found: {}".format(len(html_tables)))
 else:
     print("Failed to retrieve data: {}".format(response.status_code))
+    
