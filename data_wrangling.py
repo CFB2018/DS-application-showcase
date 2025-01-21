@@ -14,3 +14,6 @@ import numpy as np
 
 # load the data
 df = pd.read_csv('dataset_part_1.csv')
+
+# Calculate the percentage of the missing values in each attribute
+print(df.isnull().sum()/len(df)*100)
