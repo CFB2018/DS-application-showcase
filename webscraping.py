@@ -43,10 +43,26 @@ response = requests.get(static_url)
 
 if response.status_code == 200:
     soup = BeautifulSoup(response.content, "html.parser")
-    print("Page Title: ", soup.title.string) 
+    print("Page Title: ", soup.title.string) #Page Title:  List of Falcon 9 and Falcon Heavy launches - Wikipedia
     
     html_tables = soup.find_all("table")
-    print("Number of tables found: {}".format(len(html_tables)))
+    print("Number of tables found: {}".format(len(html_tables))) # 26
 else:
     print("Failed to retrieve data: {}".format(response.status_code))
-    
+
+# Check the content for the 3rd table
+first_launch_table = html_tables[2]
+print(first_launch_table)
+
+# Extract relevant column names from the HTML table headers by iterating through <th> elements
+
+# Apply find_all() function with `th` element on first_launch_table
+header_cells = first_launch_table.find_all("th")
+
+# Extract column names and filter out empty names
+column_names = []
+for header in header_cells:
+    name = extract_column_from_header(header)
+    if name is not None and len(name) > 0:
+        column_names.append(name)
+print("Column Names: {}".format(column_names))
