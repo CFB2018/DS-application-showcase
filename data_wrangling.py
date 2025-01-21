@@ -17,3 +17,9 @@ df = pd.read_csv('dataset_part_1.csv')
 
 # Calculate the percentage of the missing values in each attribute
 print(df.isnull().sum()/len(df)*100)
+
+print(df.dtypes)
+
+# Calculate number of launches on each site (check column LaunchSite)'
+launch_counts = df['LaunchSite'].value_counts()
+print(launch_counts)
