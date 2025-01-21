@@ -23,3 +23,19 @@ print(df.dtypes)
 # Calculate number of launches on each site (check column LaunchSite)'
 launch_counts = df['LaunchSite'].value_counts()
 print(launch_counts)
+
+# Count the number and occurence of each orbit
+orbit_counts = df['Orbit'].value_counts()
+print(orbit_counts)
+
+# Count the number of occurence of mission outcome of the orbits
+landing_outcomes = df['Outcome'].value_counts()
+for i, outcome in enumerate(landing_outcomes.keys()):
+    print(i,outcome)
+    
+bad_outcomes = set(landing_outcomes.keys()[[1,3,5,6,7]])
+print(bad_outcomes)
+
+# Create a landing_class list
+landing_class = [0 if outcome in bad_outcomes else 1 for outcome in df['Outcome']]
+print(landing_class)
