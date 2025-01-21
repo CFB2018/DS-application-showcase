@@ -183,3 +183,4 @@ print(data_falcon9.head())
 
 # Export to a CSV file for further analysis in part 2.
 data_falcon9.to_csv('dataset_part_1.csv', index=False)
+pd.read_csv('dataset_part_1.csv')
