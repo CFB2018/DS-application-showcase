@@ -77,6 +77,7 @@ data = response.json()
 data = pd.json_normalize(data)
 #print(data.head())
 
+
 # Select a subset from the dataframe and keep only some the features and the flight number, and date_utc.
 data = data[['rocket', 'payloads', 'launchpad', 'cores', 'flight_number', 'date_utc']]
 
@@ -156,13 +157,17 @@ print(launch_df.columns)  # Check if 'BoosterVersion' exists
 # Filter for Falcon 9 launches
 if 'BoosterVersion' in launch_df.columns:
     falcon9_launches = launch_df[launch_df['BoosterVersion'] != 'Falcon 1']
-    print(falcon9_launches.head())  # Display the first few rows of the filtered DataFrame
+    print(falcon9_launches.head())  # Display the first few rows of the df
 else:
     print("BoosterVersion column does not exist in the DataFrame.")
 
-# Filter for Falcon 9 launches
+# Filter for Falcon 9 launches and count launches
 data_falcon9 = launch_df[launch_df['BoosterVersion'] != 'Falcon 1']
+num_falcon9_launches = len(data_falcon9)
+num_falcon9_launches_shape = data_falcon9.shape[0]
+# print(num_falcon9_launches, num_falcon9_launches_shape) #90
 
+'''
 # Reset the FlightNumber column
 data_falcon9.loc[:, 'FlightNumber'] = list(range(1, data_falcon9.shape[0] + 1))
 print(data_falcon9.head())
@@ -184,3 +189,4 @@ print(data_falcon9.head())
 # Export to a CSV file for further analysis in part 2.
 data_falcon9.to_csv('dataset_part_1.csv', index=False)
 pd.read_csv('dataset_part_1.csv')
+'''
