@@ -39,3 +39,14 @@ print(bad_outcomes)
 # Create a landing_class list
 landing_class = [0 if outcome in bad_outcomes else 1 for outcome in df['Outcome']]
 print(landing_class)
+
+# The landing_class variable will represent the classification variable.
+df['Class'] = landing_class
+df[['Class']].head(8)
+df.head(5)
+
+# Success rate
+df['Class'].mean()
+
+# Export it to a new csv file
+df.to_csv('dataset_part_2.csv', index=False)
