@@ -6,5 +6,11 @@ Booster landing outcomes will be converted into training labels; 1 = booster lan
 and 2 = booster landing was unsuccessful.
 True Ocean (mission outcome was successful), or False Ocean (mission outcome was not successful),
 True RTLS or False RTLS , True ASDs or False ASDS
-
 '''
+
+# Import libraries
+import pandas as pd
+import numpy as np
+
+# load the data
+df = pd.read_csv('dataset_part_1.csv')
