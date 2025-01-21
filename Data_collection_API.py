@@ -167,7 +167,6 @@ num_falcon9_launches = len(data_falcon9)
 num_falcon9_launches_shape = data_falcon9.shape[0]
 # print(num_falcon9_launches, num_falcon9_launches_shape) #90
 
-'''
 # Reset the FlightNumber column
 data_falcon9.loc[:, 'FlightNumber'] = list(range(1, data_falcon9.shape[0] + 1))
 print(data_falcon9.head())
@@ -175,6 +174,9 @@ print(data_falcon9.head())
 # DATA WRANGLING
 # Check the total missing values
 data_falcon9.isnull().sum()
+
+missing_count = data_falcon9["LandingPad"].isnull().sum()
+print("Missing values for column LandingPad:{}".format(missing_count))
 
 # Calculate the mean value of the PayloadMass column
 mean_payload_mass = data_falcon9['PayloadMass'].mean()
@@ -188,5 +190,8 @@ print(data_falcon9.head())
 
 # Export to a CSV file for further analysis in part 2.
 data_falcon9.to_csv('dataset_part_1.csv', index=False)
-pd.read_csv('dataset_part_1.csv')
-'''
+df = pd.read_csv('dataset_part_1.csv')
+print(df.head())
+
+# Convert the rows to an HTML table and save the file
+df.to_html('table1.html', index=False)
