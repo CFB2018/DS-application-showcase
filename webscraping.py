@@ -1,3 +1,10 @@
+
+'''
+Objective: Web scrape Falcon 9 launch records  from Wikipedia
+
+'''
+
+# Import libraries
 import sys
 import requests
 from bs4 import BeautifulSoup
@@ -66,3 +73,116 @@ for header in header_cells:
     if name is not None and len(name) > 0:
         column_names.append(name)
 print("Column Names: {}".format(column_names))
+# Column Names: ['Flight No.', 'Date and time ( )', 'Launch site', 'Payload', 'Payload mass', 'Orbit', 'Customer', 'Launch outcome']
+
+# Turn the HTML tables into a data frame
+
+# Initialize an empty dictionary with keys for all the column names
+launch_dict= dict.fromkeys(column_names) # initially each key is set to None
+
+# Remove one column - Dat and time, from launch_dict
+del launch_dict['Date and time ( )']
+
+# Re-initialize the exisitng keys )columns) so they point to empty lists. Will be filles, row-by-row when extracting data.
+launch_dict['Flight No.'] = []
+launch_dict['Launch site'] = []
+launch_dict['Payload'] = []
+launch_dict['Payload mass'] = []
+launch_dict['Orbit'] = []
+launch_dict['Customer'] = []
+launch_dict['Launch outcome'] = []
+
+# Add new columns (keys) to the dictionary
+launch_dict['Version Booster']=[]
+launch_dict['Booster landing']=[]
+launch_dict['Date']=[]
+launch_dict['Time']=[]
+
+# Remove unexpected annotations, missing values and correct inconsistent formatting.
+extracted_row = 0
+
+# Extract each table
+for table_number, table in enumerate(soup.find_all('table', "wikitable plainrowheaders collapsible")):
+    # get table row
+    for rows in table.find_all("tr"):
+        # check to see if first table heading is a number corresponding to a launch number
+        if rows.th:
+            if rows.th.string:
+                flight_number = rows.th.string.strip()
+                flag = flight_number.isdigit()
+        else:
+            flag = False
+
+        # get table element
+        row = rows.find_all('td')
+
+        # if it is a number, save cells in a dictionary
+        if flag:
+            extracted_row += 1
+
+            # Flight Number: Append the flight_number into launch_dict with key `Flight No.`
+            launch_dict["Flight No."].append(flight_number)
+
+            # Extract date/time from the first column
+            datatimelist = date_time(row[0])
+
+            # Date: Append the date into launch_dict with key `Date`
+            date = datatimelist[0].strip(',')
+            launch_dict["Date"].append(date)
+
+            # Time: Append the time into launch_dict with key `Time`
+            time = datatimelist[1]
+            launch_dict["Time"].append(time)
+
+            # Booster version: Append the bv into launch_dict with key `Version Booster`
+            bv = booster_version(row[1])
+            if not bv:  # if booster_version() returned None or empty
+                bv = row[1].a.string
+            print(bv)
+            launch_dict["Version Booster"].append(bv)
+
+            # Launch Site: Append the launch_site into launch_dict with key `Launch site`
+            launch_site = row[2].a.string
+            #print(launch_site)
+            launch_dict["Launch site"].append(launch_site)
+
+            # Payload: Append the payload into launch_dict with key `Payload`
+            payload = row[3].a.string
+            #print(payload)
+            launch_dict["Payload"].append(payload)
+
+            # Payload Mass: Append the payload_mass into launch_dict with key `Payload mass`
+            payload_mass = get_mass(row[4])
+            #print(payload_mass)
+            launch_dict["Payload mass"].append(payload_mass)
+
+            # Append the orbit into launch_dict with key `Orbit`
+            orbit = row[5].a.string
+            #print(orbit)
+            launch_dict["Orbit"].append(orbit)
+
+            # Append customer with key Customer
+            if row[6].a is not None:
+                customer = row[6].a.string
+            else:
+                customer = None
+            launch_dict["Customer"].append(customer)
+
+            # Append the launch_outcome into launch_dict with key `Launch outcome`
+            launch_outcome = list(row[7].strings)[0]
+            #print(launch_outcome)
+            launch_dict["Launch outcome"].append(launch_outcome)
+
+            # Booster landing
+            booster_landing = landing_status(row[8])
+            #print(booster_landing)
+            launch_dict["Booster landing"].append(booster_landing)
+
+# Create a data frame from the dictionary
+df= pd.DataFrame({ key:pd.Series(value) for key, value in launch_dict.items() })
+
+# Save to CSV
+df.to_csv('spacex_web_scraped.csv', index= False)
+
+# Export to HTML
+df.to_html('table2.html', index=False)
