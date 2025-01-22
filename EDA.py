@@ -38,6 +38,11 @@ results = cur.fetchall()
 # Print the results
 for row in results:
     print(row)
+    
+    # Display the names of the unique launch sites in teh space mission
+    
+    
+    
 
 # Close the connection
 conn.close()
