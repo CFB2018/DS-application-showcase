@@ -60,13 +60,32 @@ try:
     print("Column renamed successfully")
 
 
-    # Additional query: Display 5 records where launch sites begin with 'CCA'
+    # Display 5 records where launch sites begin with 'CCA'
     cur.execute("SELECT * FROM spacex WHERE Launch_site LIKE 'CCA%' LIMIT 5")
     # Fetch the results
     records = cur.fetchall()
     print("\nRecords where Launch sites begin with 'CCA':")
     for record in records:
         print(record)  # Print each record
+        
+    # Calculate total payload mass for NASA (CRS) missions
+    cur.execute("""
+        SELECT SUM(CAST("Payload mass" AS FLOAT)) 
+        FROM spacex 
+        WHERE Customer = 'NASA' AND Payload LIKE '%CRS%'
+    """)
+    total_payload_mass = cur.fetchone()[0]
+    print("Total Payload Mass carried by NASA (CRS): {} kg".format(total_payload_mass))
+
+    # Calculate average payload mass for booster version F9 v1.1
+    cur.execute("""
+        SELECT AVG(CAST("Payload mass" AS FLOAT)) 
+        FROM spacex 
+        WHERE "Version Booster" = 'F9 v1.1'
+    """)
+    average_payload_mass = cur.fetchone()[0]
+    print("Average Payload Mass carried by booster version F9 v1.1: {} kg".format(round(average_payload_mass,2)))
+
 
 
 
