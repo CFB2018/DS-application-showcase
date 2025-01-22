@@ -43,7 +43,7 @@ print(df.head())
 # Load the DataFrame into the SQLite table
 df.to_sql('spacex', conn, if_exists='replace', index=False, method='multi')
 
-# Commit the changes and close the connection
+# Commit the changes
 conn.commit()
 
 # Query to display unique launch sites
@@ -53,5 +53,26 @@ print("Unique Launch Sites:")
 for site in unique_launch_sites:
     print(site[0])
 
-cur.close()
-conn.close()
+# Rename a column
+alter_table_query = 'ALTER TABLE spacex RENAME COLUMN "Launch site" TO "Launch_site"'
+try:
+    cur.execute(alter_table_query)
+    print("Column renamed successfully")
+
+
+    # Additional query: Display 5 records where launch sites begin with 'CCA'
+    cur.execute("SELECT * FROM spacex WHERE Launch_site LIKE 'CCA%' LIMIT 5")
+    # Fetch the results
+    records = cur.fetchall()
+    print("\nRecords where Launch sites begin with 'CCA':")
+    for record in records:
+        print(record)  # Print each record
+
+
+
+finally:
+    if cur:
+        cur.close()
+    if conn:
+        conn.close()
+    
