@@ -2,9 +2,13 @@
 
 Objective: Predict whether future rockets will successfully land. 
 
-Part1. Complete the Data Collection API Lab.
-Data was collected from the SpaceX API to analyze Falcon 9 rocket launches. 
-Results were compiled and saved in the file dataset_part_1.csv
+Part 1. Complete the Data Collection API Lab.
+Collect data from the SpaceX API and analyze Falcon 9 rocket launches. 
+Compile results and save the file dataset_part_1.csv
 
-Part2. Scrape the Wikipedia page containing Falcon 9 launch data using BeautifulSoup. 
-Launch records were extracted from the HTML table, parsed, and then transformed into a Pandas DataFrame.
+Part 2. Scrape the Wikipedia page containing Falcon 9 launch data. 
+Extract launch records from the HTML table, parse the data, and transform into a data frame.
+
+Part 3. Perform exploratory data analysis to predict Booster landing outcomes at different LaunchSites.
+
+Part4. Enhance your understanding of the SpaceX dataset by loading it into a database and performing queries.
