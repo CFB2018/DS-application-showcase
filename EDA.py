@@ -19,7 +19,7 @@ CREATE_TABLE = """
 CREATE TABLE IF NOT EXISTS spacex (
     ID INTEGER PRIMARY KEY NOT NULL,
     Flight_No INTEGER,
-    Launch_site TEXT UNIQUE,
+    Launch_site TEXT,
     Payload TEXT,
     Payload_mass TEXT,
     Orbit TEXT,
@@ -45,5 +45,13 @@ df.to_sql('spacex', conn, if_exists='replace', index=False, method='multi')
 
 # Commit the changes and close the connection
 conn.commit()
+
+# Query to display unique launch sites
+cur.execute('SELECT DISTINCT "Launch site" FROM spacex')
+unique_launch_sites = cur.fetchall()
+print("Unique Launch Sites:")
+for site in unique_launch_sites:
+    print(site[0])
+
 cur.close()
 conn.close()
