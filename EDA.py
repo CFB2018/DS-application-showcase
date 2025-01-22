@@ -87,6 +87,30 @@ try:
     print("Average Payload Mass carried by booster version F9 v1.1: {} kg".format(round(average_payload_mass,2)))
 
 
+ # Find the date of the first successful landing outcome on a ground pad
+    cur.execute("""
+        SELECT MIN(Date) 
+        FROM spacex 
+        WHERE "Booster landing" LIKE '%Success%'
+    """)
+    first_successful_landing_date = cur.fetchone()[0]
+    print("Date of the first successful landing outcome on ground pad: {}".format(first_successful_landing_date))
+
+# List names of boosters with successful drone ship landings and payload mass between 4000 and 6000
+    cur.execute("""
+        SELECT DISTINCT "Version Booster" 
+        FROM spacex 
+        WHERE "Booster landing" = 'Success' 
+        AND CAST("Payload mass" AS FLOAT) > 4
+        AND CAST("Payload mass" AS FLOAT) < 6
+    """)
+    successful_boosters = cur.fetchall()
+
+    # Print the names of the successful boosters
+    print("Boosters with successful drone ship landings and payload mass between 4000 and 6000:")
+    for booster in successful_boosters:
+        print(booster[0])
+
 
 
 finally:
