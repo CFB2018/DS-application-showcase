@@ -39,6 +39,12 @@ df = pd.read_csv('spacex_web_scraped.csv')
 
 # Check the first few rows of the DataFrame to understand its structure
 print(df.head())
+print(df.columns)
+
+# Convert Date column to ISO format (YYYY-MM-DD)
+df['Date'] = pd.to_datetime(df['Date'], format='%d %B %Y').dt.strftime('%Y-%m-%d')
+print(df)
+
 
 # Load the DataFrame into the SQLite table
 df.to_sql('spacex', conn, if_exists='replace', index=False, method='multi')
@@ -140,18 +146,41 @@ try:
         )
     """)
     booster_versions = cur.fetchall()
-
-    # Print the results
     print("Booster versions that have carried the maximum payload mass:")
     for version in booster_versions:
         print(version[0])
     
-    # List the records which will display the month names, failure landing_outcomes, booster version, launch_site in year 2015
     
-    # Rand the count of landing outcomes btw 2010-06-04 and 2017-03-20, in descending order.
+    # List the records which will display the month names, failure landing_outcomes, booster version, launch_site in year 2015
+    cur.execute("""
+        SELECT
+            CASE strftime('%m', Date)
+            WHEN '01' THEN 'January'
+            WHEN '02' THEN 'February'
+            WHEN '03' THEN 'March'
+            WHEN '04' THEN 'April'
+            WHEN '05' THEN 'May'
+            WHEN '06' THEN 'June'
+            WHEN '07' THEN 'July'
+            WHEN '08' THEN 'August'
+            WHEN '09' THEN 'September'
+            WHEN '10' THEN 'October'
+            WHEN '11' THEN 'November'
+            WHEN '12' THEN 'December'
+        END AS Month,
+        "Launch site",
+        "Booster version"
+    FROM spacex
+    WHERE "Booster landing" = 'Failure' 
+    AND strftime('%Y', Date) = '2015';
+""")
+    failed_records = cur.fetchall()
+    print("Month, Launch Site, and Version Booster for failed booster landings in 2015:")
+    for record in failed_records:
+        print(f"Month: {record[0]}, Launch Site: {record[1]}, Version Booster: {record[2]}")
 
-
-
+    
+# Rank the count of landing outcomes btw 2010-06-04 and 2017-03-20, in descending order
 finally:
     if cur:
         cur.close()
