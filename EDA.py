@@ -177,6 +177,20 @@ try:
     print("Fetched records:", failed_records)            
     
 # Rank the count of landing outcomes btw 2010-06-04 and 2017-03-20, in descending order
+    cur.execute("""
+        SELECT
+            "Booster landing",
+            COUNT(*) AS LandingCount
+    FROM spacex
+    WHERE Date BETWEEN '2010-06-04' AND '2017-03-20'
+    GROUP BY "Booster landing"
+    ORDER BY LandingCount DESC;
+""")
+    landing_counts = cur.fetchall()
+    for row in landing_counts:
+        print(f"{row[0]:<15} | {row[1]}")
+
+
 finally:
     if cur:
         cur.close()
