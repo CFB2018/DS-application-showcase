@@ -38,8 +38,6 @@ print("Table is Ready")
 df = pd.read_csv('spacex_web_scraped.csv')
 
 # Check the first few rows of the DataFrame to understand its structure
-print(df.head())
-print(df.columns)
 
 # Convert Date column to ISO format (YYYY-MM-DD)
 df['Date'] = pd.to_datetime(df['Date'], format='%d %B %Y').dt.strftime('%Y-%m-%d')
@@ -151,7 +149,7 @@ try:
         print(version[0])
     
     
-    # List the records which will display the month names, failure landing_outcomes, booster version, launch_site in year 2015
+    # List the records which display the month, failure landing_outcomes, booster version, launch_site in year 2015
     cur.execute("""
         SELECT
             CASE strftime('%m', Date)
@@ -168,17 +166,15 @@ try:
             WHEN '11' THEN 'November'
             WHEN '12' THEN 'December'
         END AS Month,
-        "Launch site",
-        "Booster version"
+        "Launch_site",
+        "Version Booster"
     FROM spacex
-    WHERE "Booster landing" = 'Failure' 
+    WHERE TRIM("Booster landing") = 'Failure'
     AND strftime('%Y', Date) = '2015';
 """)
     failed_records = cur.fetchall()
-    print("Month, Launch Site, and Version Booster for failed booster landings in 2015:")
-    for record in failed_records:
-        print(f"Month: {record[0]}, Launch Site: {record[1]}, Version Booster: {record[2]}")
-
+    print(f"Number of records fetched: {len(failed_records)}")
+    print("Fetched records:", failed_records)            
     
 # Rank the count of landing outcomes btw 2010-06-04 and 2017-03-20, in descending order
 finally:
