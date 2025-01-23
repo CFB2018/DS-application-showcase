@@ -110,6 +110,32 @@ try:
     print("Boosters with successful drone ship landings and payload mass between 4000 and 6000:")
     for booster in successful_boosters:
         print(booster[0])
+        
+    # Count number of successful and failure mission outcomes
+    cur.execute("""
+        SELECT TRIM("Booster landing") AS landing, COUNT(*) AS total
+        FROM spacex
+        WHERE TRIM("Booster landing") IN ('Success', 'Failure')
+        GROUP BY TRIM("Booster landing")
+    """)
+    outcomes = cur.fetchall()
+    
+    successful_count = 0
+    failed_count = 0
+    
+    for outcome in outcomes:
+        if "Success" in outcome[0]:
+            successful_count += outcome[1]
+        elif "Failure" in outcome[0]:
+            failed_count += outcome[1]
+    print("Successful outcome:{} and failed outcome{}".format(successful_count, failed_count))
+    
+    
+    # List the names of the booster versions which have carried max payload mass w subquery
+    
+    # List the records which will display the month names, failure landing_outcomes, booster version, launch_site in year 2015
+    
+    # Rand the count of landing outcomes btw 2010-06-04 and 2017-03-20, in descending order.
 
 
 
