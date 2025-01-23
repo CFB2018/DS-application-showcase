@@ -130,8 +130,21 @@ try:
             failed_count += outcome[1]
     print("Successful outcome:{} and failed outcome{}".format(successful_count, failed_count))
     
-    
-    # List the names of the booster versions which have carried max payload mass w subquery
+    # List the names of the booster versions which have carried max payload mass
+    cur.execute("""
+        SELECT DISTINCT "Version Booster"
+        FROM spacex
+        WHERE CAST("Payload mass" AS FLOAT) = (
+            SELECT MAX(CAST("Payload mass" AS FLOAT))
+            FROM spacex
+        )
+    """)
+    booster_versions = cur.fetchall()
+
+    # Print the results
+    print("Booster versions that have carried the maximum payload mass:")
+    for version in booster_versions:
+        print(version[0])
     
     # List the records which will display the month names, failure landing_outcomes, booster version, launch_site in year 2015
     
