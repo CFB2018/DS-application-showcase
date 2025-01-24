@@ -55,3 +55,12 @@ plt.ylabel("Success Rate", fontsize=14)
 plt.xticks(rotation=45)  # Rotate x-axis labels for better visibility
 plt.tight_layout()
 plt.show()
+
+# FLight Number and Orbit type
+plt.figure(figsize=(12, 6))
+sns.scatterplot(x="FlightNumber", y="Orbit", hue="Class", data=df, palette="deep", s=100, alpha=0.7)
+plt.title("Flight Number by Orbit", fontsize=20)
+plt.xlabel("Flight Number", fontsize=14)
+plt.ylabel("Orbit", fontsize=14)
+plt.tight_layout()
+plt.show()
