@@ -14,7 +14,7 @@ import seaborn as sns
 df = pd.read_csv('dataset_part_2.csv')
 print(df.head(5))
 
-# Plot Flightnumber vs PayloadMass
+# View the relationship btw Flightnumber and PayloadMass
 g = sns.catplot(y="PayloadMass", x="FlightNumber", hue="Class", data=df, aspect = 2)
 g.fig.suptitle("Payload Mass by Flight Number", fontsize= 20)
 g.set_xticklabels(rotation=45, ha='right', fontsize=10)
@@ -30,5 +30,28 @@ sns.countplot(y="LaunchSite", data=df, order=df['LaunchSite'].value_counts().ind
 plt.title("Number of Flights by Launch Site", fontsize=20)
 plt.xlabel("Number of Flights", fontsize=14)
 plt.ylabel("Launch Site", fontsize=14)
+plt.tight_layout()
+plt.show()
+
+# View the relationship between Payload mass and Launch site
+plt.figure(figsize=(12,6))
+sns.scatterplot(x="PayloadMass", y="LaunchSite", hue="Class", data=df, palette="deep", s=100, alpha=0.7)
+plt.title("Payload Mass by Launch Site", fontsize=20)
+plt.xlabel("Payload Mass (kg)", fontsize=14)
+plt.ylabel("Launch Site", fontsize=14)
+plt.tight_layout()
+plt.show()
+
+# Visualize the relationship btw success rate and orbit type
+# Group by Orbit and calculate the mean of 'Class'
+success_rate = df.groupby('Orbit')['Class'].mean().reset_index()
+# Rename the columns for clarity
+success_rate.columns = ['Orbit', 'Success Rate']
+plt.figure(figsize=(12, 6))
+sns.barplot(x='Orbit', y='Success Rate', data=success_rate, palette='deep')
+plt.title("Success Rate by Orbit", fontsize=20)
+plt.xlabel("Orbit", fontsize=14)
+plt.ylabel("Success Rate", fontsize=14)
+plt.xticks(rotation=45)  # Rotate x-axis labels for better visibility
 plt.tight_layout()
 plt.show()
