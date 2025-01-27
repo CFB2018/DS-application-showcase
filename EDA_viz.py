@@ -96,3 +96,8 @@ plt.xlabel("Year", fontsize=14)
 plt.ylabel("Success Rate", fontsize=14)
 plt.grid(True)
 plt.show()
+
+# Select features that will be used in success prediction
+features = df[['FlightNumber', 'PayloadMass', 'Orbit', 'LaunchSite', 'Flights', 'GridFins','Reused', 'Legs', 'LandingPad', 'Block', 'ReusedCount', 'Serial']]
+features.head()
+
