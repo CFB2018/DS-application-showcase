@@ -110,3 +110,21 @@ categorical_columns = ['Orbit', 'LaunchSite', 'LandingPad', 'Serial']
 features_one_hot = pd.get_dummies(df, columns=categorical_columns, drop_first=True)
 print(features_one_hot.head())
 features_one_hot.to_csv('dataset_part_3.csv', index=False)
+
+
+
+# Count the number of columns after one-hot encoding
+n_orbit = df['Orbit'].nunique()
+n_launch_site = df['LaunchSite'].nunique()
+n_landing_pad = df['LandingPad'].nunique()
+n_serial = df['Serial'].nunique()
+
+# Original number of columns
+original_columns = len(df.columns)
+
+# Total new columns after one-hot encoding
+total_new_columns = n_orbit + n_launch_site + n_landing_pad + n_serial
+
+# Total columns after one-hot encoding
+total_columns = original_columns + total_new_columns
+print("Total number of columns after one-hot encoding:", total_columns)
