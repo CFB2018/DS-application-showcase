@@ -14,3 +14,5 @@ Part 3. Perform exploratory data analysis to predict Booster landing outcomes at
 Part 4. Enhance your understanding of the SpaceX dataset by loading it into a database and performing queries.
 
 Part 5. Visualize the SpaceX dataset to gain deeper insight. Choose the features for future predictive modeling, convert categorical values into numerical format, and save csv file.
+
+Part 6. Launch Site Locations Analysis using Interactive Visual Analytics.
