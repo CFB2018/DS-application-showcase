@@ -97,7 +97,16 @@ plt.ylabel("Success Rate", fontsize=14)
 plt.grid(True)
 plt.show()
 
+
 # Select features that will be used in success prediction
 features = df[['FlightNumber', 'PayloadMass', 'Orbit', 'LaunchSite', 'Flights', 'GridFins','Reused', 'Legs', 'LandingPad', 'Block', 'ReusedCount', 'Serial']]
 features.head()
+print(df.columns)
 
+# Specify the columns to be one-hot encoded
+categorical_columns = ['Orbit', 'LaunchSite', 'LandingPad', 'Serial']
+
+# Create the one-hot encoded DataFrame
+features_one_hot = pd.get_dummies(df, columns=categorical_columns, drop_first=True)
+print(features_one_hot.head())
+features_one_hot.to_csv('dataset_part_3.csv', index=False)
