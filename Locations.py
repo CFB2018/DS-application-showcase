@@ -16,4 +16,10 @@ import pandas as pd
 
 # Mark all launch sites on a map
 spacex_geo_df = pd.read_csv('spacex_launch_geo.csv')
-print(spacex_geo_df.head())
+#print(spacex_geo_df)
+
+# What are coordinates for each site?
+spacex_geo_df = spacex_geo_df[['Launch Site', 'Lat', 'Long', 'class']]
+launch_sites_df = spacex_geo_df.groupby(['Launch Site'], as_index=False).first()
+launch_sites_df = launch_sites_df[['Launch Site', 'Lat', 'Long']]
+print(launch_sites_df)
