@@ -64,3 +64,15 @@ plt.xlabel("Flight Number", fontsize=14)
 plt.ylabel("Orbit", fontsize=14)
 plt.tight_layout()
 plt.show()
+
+# Relationship btw payload mass and orbit type
+# FLight Number and Orbit type
+plt.figure(figsize=(12, 6))
+sns.scatterplot(x="PayloadMass", y="Orbit", hue="Class", data=df, palette="deep", s=100, alpha=0.7)
+plt.title("Payload by Orbit", fontsize=20)
+plt.xlabel("Payload", fontsize=14)
+plt.ylabel("Orbit", fontsize=14)
+plt.tight_layout()
+plt.show()
+
+#
