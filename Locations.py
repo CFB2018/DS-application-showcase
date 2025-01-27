@@ -114,11 +114,12 @@ for index, row in spacex_geo_df.iterrows():
         icon=folium.Icon(color=row['marker_color'])
     ).add_to(marker_cluster)
 
-
+"""
 # Save the map to an HTML file and open it
 site_map.save("launch_outcomes_map.html")
 import webbrowser
 webbrowser.open("launch_outcomes_map.html")
+"""
 
 # Calculate the distance btw a launch site to its proximities
 
@@ -134,6 +135,32 @@ mouse_position = MousePosition(
     lat_formatter=formatter,
     lng_formatter=formatter,
 )
-
 site_map.add_child(mouse_position)
-site_map
+# Save the map to an HTML file and open it
+site_map.save("launch_outcomes_map.html")
+import webbrowser
+webbrowser.open("launch_outcomes_map.html")
+
+# Calculate the distance between two points on the map based on their Lat and Long values
+from math import sin, cos, sqrt, atan2, radians
+
+def calculate_distance(lat1, lon1, lat2, lon2):
+    # approximate radius of earth in km
+    R = 6373.0
+
+    lat1 = radians(lat1)
+    lon1 = radians(lon1)
+    lat2 = radians(lat2)
+    lon2 = radians(lon2)
+
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+
+    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+    distance = R * c
+    return distance
+
+# Coordinates for the railway, Lat:34.64176, Long:-120.60369
+distance_railway = calculate_distance()
