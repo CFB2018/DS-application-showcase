@@ -48,7 +48,7 @@ success_rate = df.groupby('Orbit')['Class'].mean().reset_index()
 # Rename the columns for clarity
 success_rate.columns = ['Orbit', 'Success Rate']
 plt.figure(figsize=(12, 6))
-sns.barplot(x='Orbit', y='Success Rate', data=success_rate, palette='deep')
+sns.barplot(x='Orbit', y='Success Rate', data=success_rate, hue='Orbit', legend=False)
 plt.title("Success Rate by Orbit", fontsize=20)
 plt.xlabel("Orbit", fontsize=14)
 plt.ylabel("Success Rate", fontsize=14)
@@ -75,4 +75,24 @@ plt.ylabel("Orbit", fontsize=14)
 plt.tight_layout()
 plt.show()
 
-#
+# Visualize the launch success yearly trend (x-axis = years and y_axis average success rate)
+df['year'] = df['Date'].str.split('-').str[0]
+
+# Group by year and calculate the mean of 'Class'
+success_rate = df.groupby('year')['Class'].mean().reset_index()
+success_rate.columns = ['year', 'Success Rate']
+
+# Convert year and Success Rate into lists for plotting
+year = success_rate['year'].tolist() #X-axis
+success_rate_values = success_rate['Success Rate'].tolist() #Y-axis
+
+print("Year List: ", year)
+print("Success Rate List: ", success_rate_values)
+
+plt.figure(figsize=(12, 6))
+plt.plot(year, success_rate_values, marker = 'o', linestyle ='-', color='b')
+plt.title("Success Rate Over Years", fontsize=20)
+plt.xlabel("Year", fontsize=14)
+plt.ylabel("Success Rate", fontsize=14)
+plt.grid(True)
+plt.show()
