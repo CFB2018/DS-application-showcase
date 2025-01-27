@@ -80,15 +80,42 @@ for site in launch_sites:
     site_map.add_child(circle)
     site_map.add_child(marker)
 
+"""
 # Save the map to an HTML file and open it
 site_map.save("launch_sites_map.html")
 import webbrowser
 webbrowser.open("launch_sites_map.html")
+"""
 
 # Mark the success/failed launches for each site (class)
-# Class= 1 # success
-# Class= 2 # failed
+# Class= 1 # success - green
+# Class= 2 # failed - red
 print(spacex_geo_df.tail(10))
 
 # Create a MarkerCluster object
-marker_cluster = MarkerCluster()
+marker_cluster = MarkerCluster().add_to(site_map)
+
+# Function that checks the value of class column
+def assign_marker_color(launch_outcome):
+    if launch_outcome == 1:
+        return 'green'
+    else:
+        return 'red'
+
+# Add a marker color column to the DataFrame
+spacex_geo_df['marker_color'] = spacex_geo_df['class'].apply(assign_marker_color)
+
+# Add markers for each launch site to the map
+for index, row in spacex_geo_df.iterrows():
+    popup = f"Launch Site: {row['Launch Site']}<br>Outcome: {'Success' if row['class'] == 1 else 'Failed'}"
+    folium.Marker(
+        location=[row['Lat'], row['Long']],
+        popup=popup,
+        icon=folium.Icon(color=row['marker_color'])
+    ).add_to(marker_cluster)
+
+
+# Save the map to an HTML file and open it
+site_map.save("launch_outcomes_map.html")
+import webbrowser
+webbrowser.open("launch_outcomes_map.html")
