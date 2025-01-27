@@ -11,4 +11,6 @@ Extract launch records from the HTML table, parse the data, and transform into a
 
 Part 3. Perform exploratory data analysis to predict Booster landing outcomes at different LaunchSites.
 
-Part4. Enhance your understanding of the SpaceX dataset by loading it into a database and performing queries.
+Part 4. Enhance your understanding of the SpaceX dataset by loading it into a database and performing queries.
+
+Part 5. Visualize the SpaceX dataset to gain deeper insight. Choose the features for future predictive modeling, convert categorical values into numerical format, and save csv file.
