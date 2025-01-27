@@ -84,3 +84,11 @@ for site in launch_sites:
 site_map.save("launch_sites_map.html")
 import webbrowser
 webbrowser.open("launch_sites_map.html")
+
+# Mark the success/failed launches for each site (class)
+# Class= 1 # success
+# Class= 2 # failed
+print(spacex_geo_df.tail(10))
+
+# Create a MarkerCluster object
+marker_cluster = MarkerCluster()
