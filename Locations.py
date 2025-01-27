@@ -119,3 +119,21 @@ for index, row in spacex_geo_df.iterrows():
 site_map.save("launch_outcomes_map.html")
 import webbrowser
 webbrowser.open("launch_outcomes_map.html")
+
+# Calculate the distance btw a launch site to its proximities
+
+# Add Mouse Position to get the coordinate (Lat, Long) for a mouse over on the map
+formatter = "function(num) {return L.Util.formatNum(num, 5);};"
+mouse_position = MousePosition(
+    position='topright',
+    separator=' Long: ',
+    empty_string='NaN',
+    lng_first=False,
+    num_digits=20,
+    prefix='Lat:',
+    lat_formatter=formatter,
+    lng_formatter=formatter,
+)
+
+site_map.add_child(mouse_position)
+site_map
