@@ -17,6 +17,20 @@ launch_sites = df['Launch Site'].unique()  # Extract unique launch site names
 # Define dropdown options (including the "All Sites" option)
 dropdown_options = [{'label': 'All Sites', 'value': 'ALL'}] + \
                    [{'label': site, 'value': site} for site in launch_sites]
+       
+ # Define payload range
+min_payload = 0
+max_payload = 10000
+
+# Define the RangeSlider
+payload_slider = dcc.RangeSlider(
+    id='payload-slider',
+    min=min_payload,
+    max=max_payload,
+    step=1000,
+    marks={i: str(i) for i in range(min_payload, max_payload + 1000, 2000)},
+    value=[min_payload, max_payload]
+)          
                    
 # Initialize Dash app
 app = dash.Dash(__name__)
@@ -32,34 +46,61 @@ app.layout = html.Div([
         searchable=True,
         clearable=False
     ),
-    html.Br(),  # Space between dropdown and chart
+ html.Br(),
 
-    dcc.Graph(id='success-pie-chart') 
+    html.H4("Select Payload Range (Kg):"),
+    payload_slider,
+
+    html.Br(),
+
+    dcc.Graph(id='success-pie-chart'),  
+    html.Br(),
+
+    dcc.Graph(id='success-payload-scatter') 
 ])
 
-
-# Add a callback function to render success-pie-chart based on selected site dropdown
-@app.callback(Output(component_id='success-pie-chart', component_property='figure'),
-               Input(component_id='site-dropdown', component_property='value'))
-
-# Add computation to callback function and return graph
+# Callback to update pie chart based on site selection
+@app.callback(
+    Output(component_id='success-pie-chart', component_property='figure'),
+    Input(component_id='site-dropdown', component_property='value')
+)
 def get_piechart(entered_site):
     if entered_site == 'ALL':
-        # Group by 'Launch Site' and count successes
         success_counts = df[df['class'] == 1].groupby('Launch Site').size().reset_index(name='count')
 
         fig = px.pie(success_counts, values='count', names='Launch Site',
                      title='Total Successful Launches (All Sites)')
-    
     else:
-        # Filter for the selected site
         filtered_df = df[df['Launch Site'] == entered_site]
         success_counts = filtered_df['class'].value_counts().reset_index()
         success_counts.columns = ['class', 'count']
 
+        success_counts['class'] = success_counts['class'].map({0: 'Failure', 1: 'Success'})
+
         fig = px.pie(success_counts, values='count', names='class',
                      title=f'Success vs Failure for {entered_site}')
-    
+
+    return fig
+
+
+
+def update_scatter(selected_site, selected_payload):
+    # Filter data based on payload range
+    filtered_df = df[(df['Payload Mass (kg)'] >= selected_payload[0]) & 
+                     (df['Payload Mass (kg)'] <= selected_payload[1])]
+
+    # Further filter based on selected site
+    if selected_site != 'ALL':
+        filtered_df = filtered_df[filtered_df['Launch Site'] == selected_site]
+
+    # Check if filtered data is empty
+    if filtered_df.empty:
+        return px.scatter(title="No data available for the selected filters")
+
+    # Create scatter plot
+    fig = px.scatter(filtered_df, x='Payload Mass (kg)', y='class', color='Booster Version Category',
+                     title='Payload vs Mission Outcome')
+
     return fig
 
 # Run the Dash app
