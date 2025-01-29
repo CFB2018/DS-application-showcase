@@ -11,6 +11,7 @@ import folium
 from folium.plugins import MarkerCluster
 from folium.plugins import MousePosition
 from folium.features import DivIcon
+from math import radians, sin, cos, sqrt, atan2
 import wget
 import pandas as pd
 
@@ -142,25 +143,66 @@ import webbrowser
 webbrowser.open("launch_outcomes_map.html")
 
 # Calculate the distance between two points on the map based on their Lat and Long values
-from math import sin, cos, sqrt, atan2, radians
 
+# Function to calculate Haversine distance
 def calculate_distance(lat1, lon1, lat2, lon2):
-    # approximate radius of earth in km
-    R = 6373.0
+    R = 6371.0  # Earth's radius in km
+    lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
 
-    lat1 = radians(lat1)
-    lon1 = radians(lon1)
-    lat2 = radians(lat2)
-    lon2 = radians(lon2)
-
-    dlon = lon2 - lon1
     dlat = lat2 - lat1
+    dlon = lon2 - lon1
 
-    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
-    distance = R * c
-    return distance
+    return R * c
 
-# Coordinates for the railway, Lat:34.64176, Long:-120.60369
-distance_railway = calculate_distance()
+# Define launch site and coastline coordinates correctly
+launch_site_lat = 34.63575
+launch_site_lon = -120.62508
+coastline_lat = 34.632834
+coastline_lon = -120.610745
+
+# Define coordinate tuples for map markers
+launch_site_coords = (launch_site_lat, launch_site_lon)
+coastline_coords = (coastline_lat, coastline_lon)
+
+# Compute the distance 
+coastline_distance = calculate_distance(launch_site_lat, launch_site_lon, coastline_lat, coastline_lon)
+
+# Create a folium map centered at the launch site
+map = folium.Map(location=launch_site_coords, zoom_start=13)
+
+# Add a marker for the launch site
+folium.Marker(
+    location=launch_site_coords,
+    popup="Launch Site",
+    icon=folium.Icon(color="blue", icon="rocket")
+).add_to(map)
+
+# Add a marker for the closest coastline point
+folium.Marker(
+    location=coastline_coords,
+    popup="Closest Coastline",
+    icon=folium.Icon(color="green", icon="cloud")
+).add_to(map)
+
+# Add a distance marker displaying the calculated distance
+distance_marker = folium.Marker(
+    location=coastline_coords,
+    icon=DivIcon(
+        icon_size=(20, 20),
+        icon_anchor=(0, 0),
+        html=f'<div style="font-size: 12px; color:#d35400;"><b>{coastline_distance:.2f} KM</b></div>'
+    )
+)
+map.add_child(distance_marker)
+
+# Draw a polyLine btw launch site to the selected coastline point
+coordinates = [launch_site_coords, coastline_coords]  # List of coordinates for the line
+lines = folium.PolyLine(locations=coordinates, color="red", weight=2)  # Red line with weight 2
+map.add_child(lines) 
+
+map.save("map_distance.html")
+import webbrowser
+webbrowser.open("map_distance.html")
