@@ -23,15 +23,16 @@ from sklearn.metrics import confusion_matrix
 
 
 # Define a function to plot the confusion matrix
-def plot_confusion_matrix(y,y_predict):
-    cm = confusion_matrix(y,y_predict)
-    ax= plt.subplot()
-    sns.heatmap(cm, annot=True, ax = ax); #annot=True to annotate cells
+def plot_confusion_matrix(y_true, y_pred, title='Confusion Matrix'):
+    cm = confusion_matrix(y_true, y_pred)
+    ax = plt.subplot()
+    sns.heatmap(cm, annot=True, ax=ax, fmt='d', cmap='Blues');  # fmt='d' for integer annotations
     ax.set_xlabel('Predicted labels')
     ax.set_ylabel('True labels')
-    ax.set_title('Confusion Matrix'); 
-    ax.xaxis.set_ticklabels(['Did Not Land', 'Land']); ax.yaxis.set_ticklabels(['Did Not land', 'Landed']) 
-    plt.show() 
+    ax.set_title(title)  # Set the title here
+    ax.xaxis.set_ticklabels(['Did Not Land', 'Landed']); 
+    ax.yaxis.set_ticklabels(['Did Not Land', 'Landed']) 
+    plt.show()
 
 # Load the dataframes
 data = pd.read_csv('dataset_part_2.csv')
@@ -89,7 +90,7 @@ print('Accuracy on test data: {:.2f}'.format(accuracy))
 
 # Confusion matrix 
 yhat=logreg_cv.predict(X_test)
-plot_confusion_matrix(y_test,yhat)
+plot_confusion_matrix(y_test,yhat, title='Logistic Regression Confusion Matrix')
 
 # The performance of the classification model correctly predicted landed when it landed (True positives = 14)
 # True negatives = 3
@@ -123,3 +124,7 @@ print('SVM - Validation Accuracy: {:.2f}'.format(val_accuracy))
 # Calculate accuracy on the test data
 test_accuracy_svm = best_model_svm.score(X_test, y_test)
 print('SVM - Test Accuracy: {:.2f}'.format(test_accuracy_svm))
+
+# Plot the confusion matrix for the SVM model
+yhat=svm_cv.predict(X_test)
+plot_confusion_matrix(y_test,yhat, title='SVM Confusion Matrix')
