@@ -119,3 +119,7 @@ print("SVM - Best cross-validated accuracy: {:.2f}".format(svm_cv.best_score_))
 best_model_svm = svm_cv.best_estimator_
 val_accuracy = best_model_svm.score(X_val, y_val)
 print('SVM - Validation Accuracy: {:.2f}'.format(val_accuracy))
+
+# Calculate accuracy on the test data
+test_accuracy_svm = best_model_svm.score(X_test, y_test)
+print('SVM - Test Accuracy: {:.2f}'.format(test_accuracy_svm))
