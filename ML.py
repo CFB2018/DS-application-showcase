@@ -49,6 +49,9 @@ scaler = StandardScaler()
 
 # Split the data into training and test data
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Display the shapes of the resulting datasets
+#print("Training data shape:", X_train.shape, y_train.shape)
+#print("Test data shape:", X_test.shape, y_test.shape)
 
 # Split the training data into training and validation sets
 X_train_final, X_val, y_train_final, y_val = train_test_split(X_train, y_train, test_size=0.25, random_state=42)
@@ -61,3 +64,30 @@ X_train_final, X_val, y_train_final, y_val = train_test_split(X_train, y_train, 
 X_train_final = scaler.fit_transform(X_train_final)
 X_val = scaler.transform(X_val)
 X_test = scaler.transform(X_test)
+
+# Define the parameter grid
+parameters = {
+    'C': np.logspace(-2, 0, 20),  # Regularization strength,
+    'penalty': ['none', 'l2'],  # Regularization type
+    'solver': ['newton-cg', 'lbfgs'],  # Optimization algorithm
+    'multi_class': ['multinomial']  # Multi-class option
+}
+
+# Create a logistic regression model
+lr = LogisticRegression(max_iter=1000)
+
+# Create the GridSearchCV object with cv=10
+logreg_cv = GridSearchCV(lr, parameters, cv=10, verbose=0)
+
+# Fit the GridSearchCV object to the training data
+logreg_cv.fit(X_train, y_train)
+
+# Print the best parameters and accuracy
+print("Tuned hyperparameters (best parameters):", logreg_cv.best_params_)
+print("Accuracy:", logreg_cv.best_score_)
+
+# Calculate accuracy on the test data using the score method
+# Use the best estimator to calculate accuracy on the test data
+best_model = logreg_cv.best_estimator_
+accuracy = best_model.score(X_test, y_test)
+print('Accuracy on test data: {:.2f}'.format(accuracy))
