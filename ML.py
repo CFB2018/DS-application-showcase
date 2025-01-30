@@ -3,7 +3,7 @@
     
     # Author: CFB
     # Date: 2025-01-30
-    # Perform EDA and determine training labels
+    # Perform EDA and determine training labels (dataset_part_2.csv)
     # Create a column for the class, standardize the data, split into training/test data 
     # & find best hyperparameter for SVM, Classification Trees and Logistic Regression
     
@@ -25,8 +25,18 @@ from sklearn.metrics import confusion_matrix
 
 # Define a function to plot the confusion matrix
 def plot_confusion_matrix(y,y_predict):
-    
+    cm = confusion_matrix(y, y_predict)
+    ax= plt.subplot()
+    sns.heatmap(cm, annot=True, ax = ax); #annot=True to annotate cells
+    ax.set_xlabel('Predicted labels')
+    ax.set_ylabel('True labels')
+    ax.set_title('Confusion Matrix'); 
+    ax.xaxis.set_ticklabels(['did not land', 'land']); ax.yaxis.set_ticklabels(['did not land', 'landed']) 
+    plt.show() 
 
-# Load the dataframe
+# Load the dataframes
 data = pd.read_csv('dataset_part_2.csv')
 print(data.head())
+
+X = pd.read_csv('dataset_part_3.csv')
+print(X.head(100))
