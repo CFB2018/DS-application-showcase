@@ -21,4 +21,10 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier 
     
-    
+
+
+
+
+# Load the dataframe
+data = pd.read_csv('dataset_part_2.csv')
+print(data.head())
