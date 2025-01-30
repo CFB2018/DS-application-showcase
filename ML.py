@@ -78,8 +78,8 @@ logreg_cv = GridSearchCV(lr, parameters, cv=10, verbose=0)
 logreg_cv.fit(X_train_final, y_train_final)
 
 # Print the best parameters and accuracy
-print("Tuned hyperparameters (best parameters):", logreg_cv.best_params_)
-print("Accuracy:", logreg_cv.best_score_)
+print("Logistic Regression - Tuned hyperparameters (best parameters): {}".format(logreg_cv.best_params_))
+print("Logistic Regression - Best cross-validated accuracy: {:.2f}".format(logreg_cv.best_score_))
 
 # Calculate accuracy on the test data using the score method
 # Use the best estimator to calculate accuracy on the test data
@@ -94,3 +94,28 @@ plot_confusion_matrix(y_test,yhat)
 # The performance of the classification model correctly predicted landed when it landed (True positives = 14)
 # True negatives = 3
 # 1 false positive (Type I error) and 0 false negative (Type II error)
+
+# Create a Support Vector Machine model
+svm = SVC()
+
+# Define the parameter grid for SVM
+parameters = {
+    'kernel': ('linear', 'rbf', 'poly', 'sigmoid'),
+    'C': np.logspace(-3, 3, 5),
+    'gamma': np.logspace(-3, 3, 5)
+}
+
+# Create the GridSearchCV object with cv=10
+svm_cv = GridSearchCV(svm, parameters, cv=10, verbose=0)
+
+# Fit the GridSearchCV object to the training data
+svm_cv.fit(X_train_final, y_train_final)
+
+# Print the best parameters and accuracy
+print("SVM - Tuned hyperparameters (best parameters): {}".format(svm_cv.best_params_))
+print("SVM - Best cross-validated accuracy: {:.2f}".format(svm_cv.best_score_))
+
+# Use the best estimator to calculate accuracy on the validation data
+best_model_svm = svm_cv.best_estimator_
+val_accuracy = best_model_svm.score(X_val, y_val)
+print('SVM - Validation Accuracy: {:.2f}'.format(val_accuracy))
