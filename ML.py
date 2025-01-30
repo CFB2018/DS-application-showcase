@@ -65,9 +65,9 @@ lr = LogisticRegression(max_iter=1000)
 
 # Define the parameter grid
 parameters = {
-    'C': np.logspace(-2, 0, 20),  # Regularization strength,
+    'C': [0.01,0.1,1],  # Regularization strength,
     'penalty': ['l2'],  # Regularization type
-    'solver': ['newton-cg', 'lbfgs'],  # Optimization algorithm
+    'solver': ['lbfgs'],  # Optimization algorithm
     'multi_class': ['multinomial']  # Multi-class option
 }
 
@@ -86,3 +86,11 @@ print("Accuracy:", logreg_cv.best_score_)
 best_model = logreg_cv.best_estimator_
 accuracy = best_model.score(X_test, y_test)
 print('Accuracy on test data: {:.2f}'.format(accuracy))
+
+# Confusion matrix 
+yhat=logreg_cv.predict(X_test)
+plot_confusion_matrix(y_test,yhat)
+
+# The performance of the classification model correctly predicted landed when it landed (True positives = 14)
+# True negatives = 3
+# 1 false positive (Type I error) and 0 false negative (Type II error)
