@@ -40,3 +40,6 @@ print(data.head())
 
 X = pd.read_csv('dataset_part_3.csv')
 print(X.head(100))
+
+# Extract the 'Class' column and convert it to a NumPy array
+Y = data['Class'].to_numpy() #use one set of brackets to convert the output to a pandas series
