@@ -20,10 +20,12 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier 
+from sklearn.metrics import confusion_matrix 
+
+
+# Define a function to plot the confusion matrix
+def plot_confusion_matrix(y,y_predict):
     
-
-
-
 
 # Load the dataframe
 data = pd.read_csv('dataset_part_2.csv')
