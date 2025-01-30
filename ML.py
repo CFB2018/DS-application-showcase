@@ -161,6 +161,8 @@ print('Decision Tree - Test Accuracy: {:.2f}'.format(test_accuracy_tree))
 # Make predictions using the Decision Tree model
 yhat_tree = best_model_tree.predict(X_test)
 
+#Test Accuracy: 0.44 is significantly lower than the cross-validated accuracy. Overfitting to the training data?
+
 # Plot the confusion matrix for the Decision Tree model
 def plot_confusion_matrix(y_true, y_pred, title='Confusion Matrix'):
     cm = confusion_matrix(y_true, y_pred)
@@ -201,9 +203,11 @@ print("KNN - Best cross-validated accuracy: {:.2f}".format(knn_cv.best_score_))
 best_model_knn = knn_cv.best_estimator_
 test_accuracy_knn = best_model_knn.score(X_test, y_test)
 print('KNN - Test Accuracy: {:.2f}'.format(test_accuracy_knn))
+# Test Accuracy: 0.78 is better than the cross-validated accuracy, --> the model generalizes better on the test set.
 
 # Make predictions using the KNN model
 yhat_knn = best_model_knn.predict(X_test)
+#print(X_test)
 
 # Plot the confusion matrix for the KNN model
 def plot_confusion_matrix(y_true, y_pred, title='Confusion Matrix'):
@@ -220,3 +224,28 @@ def plot_confusion_matrix(y_true, y_pred, title='Confusion Matrix'):
 # Plot the confusion matrix with a title
 plot_confusion_matrix(y_test, yhat_knn, title='KNN Confusion Matrix')
 
+# Which method performs the best?
+# Assuming you have the following test accuracies from your models
+test_accuracy_lr = 0.94  
+test_accuracy_tree = 0.61  
+test_accuracy_knn = 0.78  
+test_accuracy_svm = 0.89  
+
+# Create a dictionary to hold the model names and their corresponding accuracies
+model_accuracies = {
+    'Logistic Regression': test_accuracy_lr,
+    'Decision Tree': test_accuracy_tree,
+    'KNN': test_accuracy_knn,
+    'SVM': test_accuracy_svm
+}
+
+# Find the model with the highest accuracy
+best_model = max(model_accuracies, key=model_accuracies.get)
+best_accuracy = model_accuracies[best_model]
+
+# Print the results using format()
+print("Model Performance:")
+for model, accuracy in model_accuracies.items():
+    print("{}: Test Accuracy = {:.2f}".format(model, accuracy))
+
+print("\nBest Performing Model: {} with Test Accuracy = {:.2f}".format(best_model, best_accuracy))
