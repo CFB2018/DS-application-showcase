@@ -128,3 +128,50 @@ print('SVM - Test Accuracy: {:.2f}'.format(test_accuracy_svm))
 # Plot the confusion matrix for the SVM model
 yhat=svm_cv.predict(X_test)
 plot_confusion_matrix(y_test,yhat, title='SVM Confusion Matrix')
+
+
+# Create a Decision Tree Classifier object
+tree = DecisionTreeClassifier()
+
+# Define the parameter grid for Decision Tree
+parameters = {
+    'criterion': ['gini', 'entropy'],
+    'splitter': ['best', 'random'],
+    'max_depth': [2 * n for n in range(1, 10)],
+    'max_features': ['auto', 'sqrt'],
+    'min_samples_leaf': [1, 2, 4],
+    'min_samples_split': [2, 5, 10]
+}
+
+# Create the GridSearchCV object with cv=10
+tree_cv = GridSearchCV(tree, parameters, cv=10, verbose=0)
+
+# Fit the GridSearchCV object to the training data
+tree_cv.fit(X_train, y_train)
+
+# Print the best parameters and accuracy using format()
+print("Decision Tree - Tuned hyperparameters (best parameters): {}".format(tree_cv.best_params_))
+print("Decision Tree - Best cross-validated accuracy: {:.2f}".format(tree_cv.best_score_))
+
+# Use the best estimator to calculate accuracy on the test data
+best_model_tree = tree_cv.best_estimator_
+test_accuracy_tree = best_model_tree.score(X_test, y_test)
+print('Decision Tree - Test Accuracy: {:.2f}'.format(test_accuracy_tree))
+
+# Make predictions using the Decision Tree model
+yhat_tree = best_model_tree.predict(X_test)
+
+# Plot the confusion matrix for the Decision Tree model
+def plot_confusion_matrix(y_true, y_pred, title='Confusion Matrix'):
+    cm = confusion_matrix(y_true, y_pred)
+    ax = plt.subplot()
+    sns.heatmap(cm, annot=True, ax=ax, fmt='d', cmap='Blues');  # fmt='d' for integer annotations
+    ax.set_xlabel('Predicted labels')
+    ax.set_ylabel('True labels')
+    ax.set_title(title)  
+    ax.xaxis.set_ticklabels(['Did Not Land', 'Landed']); 
+    ax.yaxis.set_ticklabels(['Did Not Land', 'Landed']) 
+    plt.show()
+
+# Plot the confusion matrix with a title
+plot_confusion_matrix(y_test, yhat_tree, title='Decision Tree Confusion Matrix')
