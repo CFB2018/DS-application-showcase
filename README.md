@@ -17,3 +17,5 @@ Part 4. Enhance your understanding of the SpaceX dataset by loading it into a da
 Part 5. Visualize the SpaceX dataset to gain deeper insight. Choose the features for future predictive modeling, convert categorical values into numerical format, and save csv file.
 
 Part 6. Launch Site Locations Analysis using Interactive Visual Analytics.
+
+Part 7. Build a Machine Learning Pipeline to predict whether first stage of Falcon 9 will land successfully.
