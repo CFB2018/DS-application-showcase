@@ -8,12 +8,13 @@
     # & find best hyperparameter for SVM, Classification Trees and Logistic Regression
     
     
-# Import required libraries
+# Import required libraries, modules
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn import preprocessing
+from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import LogisticRegression
@@ -44,3 +45,8 @@ print(X.head(100))
 # Extract the 'Class' column and keep it as a Pandas series
 Y = data['Class']
 print(Y)
+
+
+# Create an instance of StandardScaler
+transform = preprocessing.StandardScaler()
+
