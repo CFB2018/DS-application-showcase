@@ -175,3 +175,48 @@ def plot_confusion_matrix(y_true, y_pred, title='Confusion Matrix'):
 
 # Plot the confusion matrix with a title
 plot_confusion_matrix(y_test, yhat_tree, title='Decision Tree Confusion Matrix')
+
+
+# Create a k nearest neighbors classifier object and perform hyperparameter tuning using GridSearchCV
+KNN = KNeighborsClassifier()
+
+# Define the parameter grid for KNN
+parameters = {
+    'n_neighbors': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],  # Number of neighbors
+    'algorithm': ['auto', 'ball_tree', 'kd_tree', 'brute'],  # Algorithm to compute the nearest neighbors
+    'p': [1, 2]  # Power parameter for the Minkowski distance
+}
+
+# Create the GridSearchCV object with cv=10
+knn_cv = GridSearchCV(KNN, parameters, cv=10, verbose=0)
+
+# Fit the GridSearchCV object to the training data
+knn_cv.fit(X_train, y_train)
+
+# Print the best parameters and accuracy using format()
+print("KNN - Tuned hyperparameters (best parameters): {}".format(knn_cv.best_params_))
+print("KNN - Best cross-validated accuracy: {:.2f}".format(knn_cv.best_score_))
+
+# Use the best estimator to calculate accuracy on the test data
+best_model_knn = knn_cv.best_estimator_
+test_accuracy_knn = best_model_knn.score(X_test, y_test)
+print('KNN - Test Accuracy: {:.2f}'.format(test_accuracy_knn))
+
+# Make predictions using the KNN model
+yhat_knn = best_model_knn.predict(X_test)
+
+# Plot the confusion matrix for the KNN model
+def plot_confusion_matrix(y_true, y_pred, title='Confusion Matrix'):
+    cm = confusion_matrix(y_true, y_pred)
+    ax = plt.subplot()
+    sns.heatmap(cm, annot=True, ax=ax, fmt='d', cmap='Blues');  # fmt='d' for integer annotations
+    ax.set_xlabel('Predicted labels')
+    ax.set_ylabel('True labels')
+    ax.set_title(title)  # Set the title here
+    ax.xaxis.set_ticklabels(['Did Not Land', 'Landed']); 
+    ax.yaxis.set_ticklabels(['Did Not Land', 'Landed']) 
+    plt.show()
+
+# Plot the confusion matrix with a title
+plot_confusion_matrix(y_test, yhat_knn, title='KNN Confusion Matrix')
+
