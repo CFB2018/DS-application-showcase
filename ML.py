@@ -24,13 +24,13 @@ from sklearn.metrics import confusion_matrix
 
 # Define a function to plot the confusion matrix
 def plot_confusion_matrix(y,y_predict):
-    cm = confusion_matrix(y, y_predict)
+    cm = confusion_matrix(y,y_predict)
     ax= plt.subplot()
     sns.heatmap(cm, annot=True, ax = ax); #annot=True to annotate cells
     ax.set_xlabel('Predicted labels')
     ax.set_ylabel('True labels')
     ax.set_title('Confusion Matrix'); 
-    ax.xaxis.set_ticklabels(['did not land', 'land']); ax.yaxis.set_ticklabels(['did not land', 'landed']) 
+    ax.xaxis.set_ticklabels(['Did Not Land', 'Land']); ax.yaxis.set_ticklabels(['Did Not land', 'Landed']) 
     plt.show() 
 
 # Load the dataframes
@@ -68,7 +68,7 @@ X_test = scaler.transform(X_test)
 # Define the parameter grid
 parameters = {
     'C': np.logspace(-2, 0, 20),  # Regularization strength,
-    'penalty': ['none', 'l2'],  # Regularization type
+    'penalty': ['l2'],  # Regularization type
     'solver': ['newton-cg', 'lbfgs'],  # Optimization algorithm
     'multi_class': ['multinomial']  # Multi-class option
 }
