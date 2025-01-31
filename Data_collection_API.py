@@ -7,9 +7,9 @@ Data is collected from the SpaceX API to analyze Falcon 9 rocket launches.
 '''
 
 # Import necessary libraries
-import requests # making HTTP requests
-import pandas as pd # data manipulation
-import numpy as np # numerical operations
+import requests 
+import pandas as pd 
+import numpy as np 
 import datetime
 
 # Print all columns of a data frame
