@@ -62,7 +62,7 @@ X_val = scaler.transform(X_val)
 X_test = scaler.transform(X_test)
 
 # Create a logistic regression model
-lr = LogisticRegression(max_iter=1000)
+lr = LogisticRegression(max_iter=1000, class_weight = 'balanced')
 
 # Define the parameter grid
 parameters = {
