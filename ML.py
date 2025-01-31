@@ -53,6 +53,8 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 #print("Training data shape:", X_train.shape, y_train.shape)
 #print("Test data shape:", X_test.shape, y_test.shape)
 
+print("Number of records in the test sample: {}".format(len(y_test)))
+
 # Split the training data into training and validation sets
 X_train_final, X_val, y_train_final, y_val = train_test_split(X_train, y_train, test_size=0.25, random_state=42)
 
@@ -60,8 +62,6 @@ X_train_final, X_val, y_train_final, y_val = train_test_split(X_train, y_train, 
 X_train_final = scaler.fit_transform(X_train_final)
 X_val = scaler.transform(X_val)
 X_test = scaler.transform(X_test)
-
-
 
 # Create an instance of StandardScaler
 scaler = StandardScaler()
@@ -139,8 +139,7 @@ parameters = {
 svm = SVC()
 
 # Create the GridSearchCV object with cv=10
-svm_cv = GridSearchCV(svm, parameters, cv=10, verbose=1) # increase verbosity for more details
-
+svm_cv = GridSearchCV(svm, parameters, cv=10, verbose=1)
 # Fit the GridSearchCV object to the training data
 svm_cv.fit(X_train_final, y_train_final)
 
@@ -156,6 +155,8 @@ print('SVM - Validation Accuracy: {:.2f}'.format(val_accuracy))
 # Calculate accuracy on the test data
 test_accuracy_svm = best_model_svm.score(X_test, y_test)
 print('SVM - Test Accuracy: {:.2f}'.format(test_accuracy_svm))
+
+print("Best Kernel:", svm_cv.best_params_['kernel'])
 
 # Plot the confusion matrix for the SVM model
 yhat=svm_cv.predict(X_test)
@@ -235,8 +236,8 @@ KNN = KNeighborsClassifier()
 parameters = {
     'n_neighbors': [3, 5, 7],
     'weights': ['uniform', 'distance'],
-    'algorithm': ["euclidean", "manhattan"],  
-    'p': [1, 2]  # Power parameter for the Minkowski distance
+    'algorithm': ['brute', 'auto', 'kd_tree', 'ball_tree'],  
+    'p': [1, 2]  #Minkowski distance
 }
 
 # Create the GridSearchCV object with cv=10
