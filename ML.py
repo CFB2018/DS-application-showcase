@@ -66,14 +66,14 @@ lr = LogisticRegression(max_iter=1000, class_weight = 'balanced')
 
 # Define the parameter grid
 parameters = {
-    'C': [0.01,0.1,1],  # Regularization strength,
+    'C': [0.001,0.01,0.1,1,10,100],  # Regularization strength
     'penalty': ['l2'],  # Regularization type
-    'solver': ['lbfgs'],  # Optimization algorithm
+    'solver': ['newton-cg','lbfgs','saga'],  # Optimization algorithm
     'multi_class': ['multinomial']  # Multi-class option
 }
 
 # Create the GridSearchCV object with cv=10
-logreg_cv = GridSearchCV(lr, parameters, cv=10, verbose=0)
+logreg_cv = GridSearchCV(lr, parameters, cv=10, verbose=1)
 
 # Fit the GridSearchCV object to the training data
 logreg_cv.fit(X_train_final, y_train_final)
