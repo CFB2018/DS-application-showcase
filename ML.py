@@ -181,7 +181,7 @@ parameters = {
 }
 
 # Create the GridSearchCV object with cv=10
-tree_cv = GridSearchCV(tree, parameters, cv=10, verbose=1)
+tree_cv = GridSearchCV(tree, parameters, cv=10, verbose=1, n_jobs=1)
 
 # Fit the GridSearchCV object to the training data
 tree_cv.fit(X_train, y_train)
@@ -233,14 +233,14 @@ KNN = KNeighborsClassifier()
 
 # Define the parameter grid for KNN
 parameters = {
-    'n_neighbors': list(range(1,21)),
+    'n_neighbors': [3, 5, 7],
     'weights': ['uniform', 'distance'],
-    'algorithm': ['auto', 'ball_tree', 'kd_tree', 'brute'],  # Algorithm to compute the nearest neighbors
+    'algorithm': ["euclidean", "manhattan"],  
     'p': [1, 2]  # Power parameter for the Minkowski distance
 }
 
 # Create the GridSearchCV object with cv=10
-knn_cv = GridSearchCV(KNN, parameters, cv=10, verbose=1)
+knn_cv = GridSearchCV(KNN, parameters, cv=10, verbose=1, n_jobs=1) # Run on a single thread to avoid threadpool issues
 
 # Fit the GridSearchCV object to the training data
 knn_cv.fit(X_train, y_train)
