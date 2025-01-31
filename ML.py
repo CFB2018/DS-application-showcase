@@ -61,6 +61,30 @@ X_train_final = scaler.fit_transform(X_train_final)
 X_val = scaler.transform(X_val)
 X_test = scaler.transform(X_test)
 
+
+
+# Create an instance of StandardScaler
+scaler = StandardScaler()
+
+# Split the data into training and test data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Display the shapes of the resulting datasets
+#print("Training data shape:", X_train.shape, y_train.shape)
+#print("Test data shape:", X_test.shape, y_test.shape)
+
+# Split the training data into training and validation sets
+X_train_final, X_val, y_train_final, y_val = train_test_split(X_train, y_train, test_size=0.25, random_state=42)
+
+# Standardize the features (fit the scaler on the training, validation and test data)
+X_train_final = scaler.fit_transform(X_train_final)
+X_val = scaler.transform(X_val)
+X_test = scaler.transform(X_test)
+
+# Convert scaled data back to a df to retain feature names
+X_train_final = pd.DataFrame(X_train_final, columns=X_train.columns)
+X_val = pd.DataFrame(X_val, columns=X_train.columns)
+X_test = pd.DataFrame(X_test, columns=X_train.columns)
+
 # Create a logistic regression model
 lr = LogisticRegression(max_iter=1000, class_weight = 'balanced')
 
@@ -81,6 +105,11 @@ logreg_cv.fit(X_train_final, y_train_final)
 # Print the best parameters and accuracy
 print("Logistic Regression - Tuned hyperparameters (best parameters): {}".format(logreg_cv.best_params_))
 print("Logistic Regression - Best cross-validated accuracy: {:.2f}".format(logreg_cv.best_score_))
+
+# Use the best estimator to calculate accuracy on the validation data (if available)
+if 'X_val' in locals() or 'X_val' in globals():  # Check if validation set exists
+    val_accuracy = logreg_cv.best_estimator_.score(X_val, y_val)
+    print('Logistic Regression - Validation Accuracy: {:.2f}'.format(val_accuracy))
 
 # Calculate accuracy on the test data using the score method
 # Use the best estimator to calculate accuracy on the test data
