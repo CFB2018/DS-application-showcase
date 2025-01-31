@@ -106,8 +106,11 @@ parameters = {
     'gamma': np.logspace(-3, 3, 5)
 }
 
+# Initialize the SVM model
+svm = SVC()
+
 # Create the GridSearchCV object with cv=10
-svm_cv = GridSearchCV(svm, parameters, cv=10, verbose=0)
+svm_cv = GridSearchCV(svm, parameters, cv=10, verbose=1) # increase verbosity for more details
 
 # Fit the GridSearchCV object to the training data
 svm_cv.fit(X_train_final, y_train_final)
