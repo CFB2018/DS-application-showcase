@@ -170,13 +170,14 @@ parameters = {
     'criterion': ['gini', 'entropy'],
     'splitter': ['best', 'random'],
     'max_depth': [2 * n for n in range(1, 10)] + [None], # max_depth = None means unlimited depth
-    'max_features': ['auto', 'sqrt'],
-    'min_samples_leaf': [1, 2, 4],
-    'min_samples_split': [2, 5, 10]
+    'max_features': ['log2', 'sqrt'],
+    'min_samples_leaf': [1, 2, 3, 4, 5],
+    'min_samples_split': [2, 5, 10],
+    'ccp_alpha': [0.0, 0.001, 0.005, 0.01, 0.02, 0.05, 0.1]
 }
 
 # Create the GridSearchCV object with cv=10
-tree_cv = GridSearchCV(tree, parameters, cv=10, verbose=0)
+tree_cv = GridSearchCV(tree, parameters, cv=10, verbose=1)
 
 # Fit the GridSearchCV object to the training data
 tree_cv.fit(X_train, y_train)
@@ -185,6 +186,11 @@ tree_cv.fit(X_train, y_train)
 print("Decision Tree - Tuned hyperparameters (best parameters): {}".format(tree_cv.best_params_))
 print("Decision Tree - Best cross-validated accuracy: {:.2f}".format(tree_cv.best_score_))
 
+# Use the best estimator to calculate accuracy on the validation data (if available)
+if 'X_val' in locals() or 'X_val' in globals():  # Check if validation set exists
+    val_accuracy = tree_cv.best_estimator_.score(X_val, y_val)
+    print('Decision Tree - Validation Accuracy: {:.2f}'.format(val_accuracy))
+    
 # Use the best estimator to calculate accuracy on the test data
 best_model_tree = tree_cv.best_estimator_
 test_accuracy_tree = best_model_tree.score(X_test, y_test)
@@ -210,6 +216,13 @@ def plot_confusion_matrix(y_true, y_pred, title='Confusion Matrix'):
 # Plot the confusion matrix with a title
 plot_confusion_matrix(y_test, yhat_tree, title='Decision Tree Confusion Matrix')
 
+# Feature Importance
+importances = tree_cv.best_estimator_.feature_importances_
+feature_names = X_train.columns  # Ensure X_train is a DataFrame
+feature_importance_df = pd.DataFrame({'Feature': feature_names, 'Importance': importances})
+feature_importance_df = feature_importance_df.sort_values(by='Importance', ascending=False)
+print("Feature Importances:")
+print(feature_importance_df)
 
 # Create a k nearest neighbors classifier object and perform hyperparameter tuning using GridSearchCV
 KNN = KNeighborsClassifier()
