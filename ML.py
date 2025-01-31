@@ -163,13 +163,13 @@ plot_confusion_matrix(y_test,yhat, title='SVM Confusion Matrix')
 
 
 # Create a Decision Tree Classifier object
-tree = DecisionTreeClassifier()
+tree = DecisionTreeClassifier(random_state=42)
 
 # Define the parameter grid for Decision Tree
 parameters = {
     'criterion': ['gini', 'entropy'],
     'splitter': ['best', 'random'],
-    'max_depth': [2 * n for n in range(1, 10)],
+    'max_depth': [2 * n for n in range(1, 10)] + [None], # max_depth = None means unlimited depth
     'max_features': ['auto', 'sqrt'],
     'min_samples_leaf': [1, 2, 4],
     'min_samples_split': [2, 5, 10]
