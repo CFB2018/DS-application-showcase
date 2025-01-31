@@ -165,6 +165,10 @@ plot_confusion_matrix(y_test,yhat, title='SVM Confusion Matrix')
 # Create a Decision Tree Classifier object
 tree = DecisionTreeClassifier(random_state=42)
 
+# Compute the pruning path
+path = tree.cost_complexity_pruning_path(X_train, y_train)
+ccp_alphas = path.ccp_alphas
+
 # Define the parameter grid for Decision Tree
 parameters = {
     'criterion': ['gini', 'entropy'],
@@ -173,7 +177,7 @@ parameters = {
     'max_features': ['log2', 'sqrt'],
     'min_samples_leaf': [1, 2, 3, 4, 5],
     'min_samples_split': [2, 5, 10],
-    'ccp_alpha': [0.0, 0.001, 0.005, 0.01, 0.02, 0.05, 0.1]
+    'ccp_alpha': ccp_alphas
 }
 
 # Create the GridSearchCV object with cv=10
@@ -199,7 +203,7 @@ print('Decision Tree - Test Accuracy: {:.2f}'.format(test_accuracy_tree))
 # Make predictions using the Decision Tree model
 yhat_tree = best_model_tree.predict(X_test)
 
-#Test Accuracy: 0.44 is significantly lower than the cross-validated accuracy. Overfitting to the training data?
+#Test Accuracy: 0.44 is significantly lower than the cross-validated accuracy. Prune to adjust overfitting if possible.
 
 # Plot the confusion matrix for the Decision Tree model
 def plot_confusion_matrix(y_true, y_pred, title='Confusion Matrix'):
@@ -229,13 +233,14 @@ KNN = KNeighborsClassifier()
 
 # Define the parameter grid for KNN
 parameters = {
-    'n_neighbors': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],  # Number of neighbors
+    'n_neighbors': list(range(1,21)),
+    'weights': ['uniform', 'distance'],
     'algorithm': ['auto', 'ball_tree', 'kd_tree', 'brute'],  # Algorithm to compute the nearest neighbors
     'p': [1, 2]  # Power parameter for the Minkowski distance
 }
 
 # Create the GridSearchCV object with cv=10
-knn_cv = GridSearchCV(KNN, parameters, cv=10, verbose=0)
+knn_cv = GridSearchCV(KNN, parameters, cv=10, verbose=1)
 
 # Fit the GridSearchCV object to the training data
 knn_cv.fit(X_train, y_train)
@@ -244,11 +249,15 @@ knn_cv.fit(X_train, y_train)
 print("KNN - Tuned hyperparameters (best parameters): {}".format(knn_cv.best_params_))
 print("KNN - Best cross-validated accuracy: {:.2f}".format(knn_cv.best_score_))
 
+# Use the best estimator to calculate accuracy on the validation data (if available)
+if 'X_val' in locals() or 'X_val' in globals():  # Check if validation set exists
+    val_accuracy = knn_cv.best_estimator_.score(X_val, y_val)
+    print('KNN - Validation Accuracy: {:.2f}'.format(val_accuracy))
+
 # Use the best estimator to calculate accuracy on the test data
 best_model_knn = knn_cv.best_estimator_
 test_accuracy_knn = best_model_knn.score(X_test, y_test)
 print('KNN - Test Accuracy: {:.2f}'.format(test_accuracy_knn))
-# Test Accuracy: 0.78 is better than the cross-validated accuracy, --> the model generalizes better on the test set.
 
 # Make predictions using the KNN model
 yhat_knn = best_model_knn.predict(X_test)
@@ -272,7 +281,7 @@ plot_confusion_matrix(y_test, yhat_knn, title='KNN Confusion Matrix')
 # Which method performs the best?
 # Assuming you have the following test accuracies from your models
 test_accuracy_lr = 0.94  
-test_accuracy_tree = 0.61  
+test_accuracy_tree = 0.44
 test_accuracy_knn = 0.78  
 test_accuracy_svm = 0.89  
 
