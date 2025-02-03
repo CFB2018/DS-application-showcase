@@ -45,7 +45,8 @@ with sqlite3.connect("spacex.db") as conn:
     print("\nRecords where Launch sites begin with 'CCA':")
     for record in records:
         print(record)
-    #################################
+    
+    # Calcualte total payload mass by NASA
     cur.execute("""
     SELECT SUM(CAST("PAYLOAD_MASS__KG_" AS FLOAT)) 
     FROM spacex 
@@ -54,15 +55,15 @@ with sqlite3.connect("spacex.db") as conn:
     total_payload_mass = cur.fetchone()[0]
     print("Total Payload Mass carried by NASA (CRS): {} kg".format(total_payload_mass if total_payload_mass else 0))
 
-
     # Calculate average payload mass for booster version F9 v1.1
     cur.execute("""
-        SELECT AVG(CAST("Payload mass" AS FLOAT)) 
-        FROM spacex 
-        WHERE "Version Booster" = 'F9 v1.1'
+    SELECT AVG(CAST("PAYLOAD_MASS__KG_" AS FLOAT)) 
+    FROM spacex 
+    WHERE "Booster_Version" = 'F9 v1.1'
     """)
     average_payload_mass = cur.fetchone()[0]
-    print("Average Payload Mass carried by booster version F9 v1.1: {} kg".format(round(average_payload_mass,2)))
+    print("Average Payload Mass carried by booster version F9 v1.1: {} kg".format(round(average_payload_mass, 2) if average_payload_mass else 0))
+
 
 
  # Find the date of the first successful landing outcome on a ground pad
