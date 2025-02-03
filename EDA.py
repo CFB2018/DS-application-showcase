@@ -1,6 +1,3 @@
-
-# SPACEX.db
-
 # Objective: Load the Spacex_dataset into a table in the Db2 database
 # Includes a record for each payload carried during a SpaceX mission
 # Execute queries to understand the dataset better
@@ -20,7 +17,6 @@ df['Date'] = pd.to_datetime(df['Date'], errors='coerce').dt.strftime('%Y-%m-%d')
 # Rename columns to avoid spaces in SQL
 df.columns = df.columns.str.replace(' ', '_')  # Replaces spaces with underscores
 
-    
 # Use a context manager for the database connection
 with sqlite3.connect("spacex.db") as conn:
     cur = conn.cursor()
@@ -40,48 +36,70 @@ with sqlite3.connect("spacex.db") as conn:
 
     # Display 5 records where launch sites begin with 'CCA'
     cur.execute("SELECT * FROM spacex WHERE Launch_site LIKE 'CCA%' LIMIT 5")
-    # Fetch the results
     records = cur.fetchall()
     print("\nRecords where Launch sites begin with 'CCA':")
     for record in records:
         print(record)
-    
-    # Calcualte total payload mass by NASA
+
+    # Calculate total payload mass by NASA
     cur.execute("""
-    SELECT SUM(CAST("PAYLOAD_MASS__KG_" AS FLOAT)) 
-    FROM spacex 
-    WHERE Customer = 'NASA (CRS)'
+        SELECT SUM(CAST("PAYLOAD_MASS__KG_" AS FLOAT)) 
+        FROM spacex 
+        WHERE Customer = 'NASA (CRS)'
     """)
     total_payload_mass = cur.fetchone()[0]
     print("Total Payload Mass carried by NASA (CRS): {} kg".format(total_payload_mass if total_payload_mass else 0))
 
     # Calculate average payload mass for booster version F9 v1.1
     cur.execute("""
-    SELECT AVG(CAST("PAYLOAD_MASS__KG_" AS FLOAT)) 
-    FROM spacex 
-    WHERE "Booster_Version" = 'F9 v1.1'
+        SELECT AVG(CAST("PAYLOAD_MASS__KG_" AS FLOAT)) 
+        FROM spacex 
+        WHERE "Booster_Version" = 'F9 v1.1'
     """)
     average_payload_mass = cur.fetchone()[0]
     print("Average Payload Mass carried by booster version F9 v1.1: {} kg".format(round(average_payload_mass, 2) if average_payload_mass else 0))
 
- # Find the date of the first successful landing outcome on a ground pad
+    # Find the date of the first successful landing outcome on a ground pad
     cur.execute("""
-    SELECT MIN(Date) 
-    FROM spacex 
-    WHERE "Landing_Outcome" LIKE '%Success%'
+        SELECT MIN(Date) 
+        FROM spacex 
+        WHERE "Landing_Outcome" LIKE '%Success%'
     """)
     first_successful_landing_date = cur.fetchone()[0]
     print("Date of the first successful landing outcome: {}".format(first_successful_landing_date))
 
-
-# List names of boosters with successful drone ship landings and payload mass between 4000 and 6000
     cur.execute("""
-        SELECT DISTINCT "Version Booster" 
+        SELECT DISTINCT Booster_Version 
         FROM spacex 
-        WHERE "Booster landing" = 'Success' 
-        AND CAST("Payload mass" AS FLOAT) > 4
-        AND CAST("Payload mass" AS FLOAT) < 6
+        WHERE Landing_Outcome LIKE '%Success%'
+        AND CAST(PAYLOAD_MASS__KG_ AS FLOAT) BETWEEN 4000 AND 6000
     """)
+    successful_boosters = cur.fetchall()
+
+    if successful_boosters:
+        print("Boosters with successful drone ship landings and payload mass between 4000 and 6000 kg:")
+        for booster in successful_boosters:
+            print(booster[0])
+    else:
+        print("No matching boosters found.")
+
+    cur.execute("SELECT DISTINCT Landing_Outcome FROM spacex")
+    print(cur.fetchall())  
+
+    cur.execute("SELECT MIN(PAYLOAD_MASS__KG_), MAX(PAYLOAD_MASS__KG_) FROM spacex")
+    print(cur.fetchall())  
+
+    cur.execute("SELECT DISTINCT Booster_Version FROM spacex")
+    print(cur.fetchall())  
+
+    # List names of boosters with successful drone ship landings and payload mass between 4000 and 6000
+    cur.execute("""
+        SELECT DISTINCT Booster_Version 
+        FROM spacex 
+        WHERE Landing_Outcome LIKE '%Success (drone ship)%'
+        AND CAST(PAYLOAD_MASS__KG_ AS FLOAT) BETWEEN 4000 AND 6000
+    """)
+    
     successful_boosters = cur.fetchall()
 
     # Print the names of the successful boosters
@@ -106,7 +124,7 @@ with sqlite3.connect("spacex.db") as conn:
             successful_count += outcome[1]
         elif "Failure" in outcome[0]:
             failed_count += outcome[1]
-    print("Successful outcome:{} and Failed outcome {}".format(successful_count, failed_count))
+    print("Successful outcome: {} and Failed outcome: {}".format(successful_count, failed_count))
     
     # List the names of the booster versions which have carried max payload mass
     cur.execute("""
@@ -121,7 +139,6 @@ with sqlite3.connect("spacex.db") as conn:
     print("Booster versions that have carried the maximum payload mass:")
     for version in booster_versions:
         print(version[0])
-    
     
     # List the records which display the month, failure landing_outcomes, booster version, launch_site in year 2015
     cur.execute("""
@@ -139,24 +156,13 @@ with sqlite3.connect("spacex.db") as conn:
             WHEN '10' THEN 'October'
             WHEN '11' THEN 'November'
             WHEN '12' THEN 'December'
-        END AS Month,
-        "Launch_site",
-        "Version Booster"
-    FROM spacex
-    WHERE TRIM("Booster landing") = 'Failure'
-    AND strftime('%Y', Date) = '2015';
-""")
-    failed_records = cur.fetchall()
-    print(f"Number of records fetched: {len(failed_records)}")
-    print("Fetched records:", failed_records)            
-
-
-
-
-
-
-
-
+            END AS Month,
+            "Launch_site",
+            "Version Booster"
+        FROM spacex
+        WHERE TRIM("Booster landing") = 'Failure'
+        AND strftime('%Y', Date) = '2015';
+    """)
 
     # Rank the count of landing outcomes between 2010-06-04 and 2017-03-20
     cur.execute("""
