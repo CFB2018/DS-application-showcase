@@ -9,7 +9,7 @@ import sqlite3
 import pandas as pd
 
 # Load the data from CSV
-df = pd.read_csv('C:/Users/marbj610/Documents/Repository/DS-application-showcase/Spacex.csv')
+df = pd.read_csv('Spacex.csv')
 
 # Print columns to debug
 print("Columns in DataFrame:", df.columns)
@@ -45,15 +45,15 @@ with sqlite3.connect("spacex.db") as conn:
     print("\nRecords where Launch sites begin with 'CCA':")
     for record in records:
         print(record)
-        
-    # Calculate total payload mass for NASA (CRS) missions
+    #################################
     cur.execute("""
-        SELECT SUM(CAST("Payload mass" AS FLOAT)) 
-        FROM spacex 
-        WHERE Customer = 'NASA' AND Payload LIKE '%CRS%'
+    SELECT SUM(CAST("PAYLOAD_MASS__KG_" AS FLOAT)) 
+    FROM spacex 
+    WHERE Customer = 'NASA (CRS)'
     """)
     total_payload_mass = cur.fetchone()[0]
-    print("Total Payload Mass carried by NASA (CRS): {} kg".format(total_payload_mass))
+    print("Total Payload Mass carried by NASA (CRS): {} kg".format(total_payload_mass if total_payload_mass else 0))
+
 
     # Calculate average payload mass for booster version F9 v1.1
     cur.execute("""
