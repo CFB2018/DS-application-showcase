@@ -182,7 +182,7 @@ for table_number, table in enumerate(soup.find_all('table', "wikitable plainrowh
 df= pd.DataFrame({ key:pd.Series(value) for key, value in launch_dict.items() })
 
 # Save to CSV
-df.to_csv('spacex_web_scraped.csv', index= False)
+#df.to_csv('spacex_web_scraped.csv', index= False)
 
 # Export to HTML
 df.to_html('table2.html', index=False)
