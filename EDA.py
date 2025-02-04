@@ -143,8 +143,6 @@ with sqlite3.connect("spacex.db") as conn:
     for version in booster_versions:
         print(version[0])
     
-    
-    
     # List the records which display the month, failure landing_outcomes, booster version, launch_site in year 2015
     cur.execute("""
         SELECT
@@ -163,24 +161,23 @@ with sqlite3.connect("spacex.db") as conn:
             WHEN '12' THEN 'December'
             END AS Month,
             "Launch_site",
-            "Version Booster"
+            "Version_Booster"
         FROM spacex
-        WHERE TRIM("Booster landing") = 'Failure'
+        WHERE TRIM("Landing_Outcome") = 'Failure'
         AND strftime('%Y', Date) = '2015';
     """)
 
     # Rank the count of landing outcomes between 2010-06-04 and 2017-03-20
     cur.execute("""
         SELECT
-            TRIM(UPPER(Booster_landing)) AS LandingOutcome,
+            TRIM(UPPER("Landing_Outcome")) AS LandingOutcome,
             COUNT(*) AS LandingCount
         FROM spacex
         WHERE Date BETWEEN '2010-06-04' AND '2017-03-20'
-        GROUP BY Booster_landing
+        GROUP BY Landing_Outcome
         ORDER BY LandingCount DESC;
     """)
 
-    # Fetch and display the results
     landing_outcomes = cur.fetchall()
     print("\nLanding Outcomes Ranking:")
     for outcome in landing_outcomes:
