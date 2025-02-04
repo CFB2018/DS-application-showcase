@@ -166,6 +166,10 @@ with sqlite3.connect("spacex.db") as conn:
         WHERE TRIM("Landing_Outcome") = 'Failure'
         AND strftime('%Y', Date) = '2015';
     """)
+    results = cur.fetchall()
+    print("Records with failure landing outcomes in 2015:")
+    for result in results:
+        print(result)
 
     # Rank the count of landing outcomes between 2010-06-04 and 2017-03-20
     cur.execute("""
