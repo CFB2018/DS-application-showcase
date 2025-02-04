@@ -143,33 +143,27 @@ with sqlite3.connect("spacex.db") as conn:
     for version in booster_versions:
         print(version[0])
     
+    
     # List the records which display the month, failure landing_outcomes, booster version, launch_site in year 2015
+
+ #   cur.execute("PRAGMA table_info(spacex);")
+ #   columns = cur.fetchall()
+ #   print(columns)
+
     cur.execute("""
-        SELECT
-            CASE strftime('%m', Date)
-            WHEN '01' THEN 'January'
-            WHEN '02' THEN 'February'
-            WHEN '03' THEN 'March'
-            WHEN '04' THEN 'April'
-            WHEN '05' THEN 'May'
-            WHEN '06' THEN 'June'
-            WHEN '07' THEN 'July'
-            WHEN '08' THEN 'August'
-            WHEN '09' THEN 'September'
-            WHEN '10' THEN 'October'
-            WHEN '11' THEN 'November'
-            WHEN '12' THEN 'December'
-            END AS Month,
-            "Launch_site",
-            "Version_Booster"
-        FROM spacex
-        WHERE TRIM("Landing_Outcome") = 'Failure'
-        AND strftime('%Y', Date) = '2015';
-    """)
-    results = cur.fetchall()
+    SELECT "Launch_Site", "Booster_Version", "Landing_Outcome", "Date"
+    FROM spacex
+    WHERE TRIM("Landing_Outcome") = 'Failure'
+    AND strftime('%Y', "Date") = '2015';
+""")
+    failure_records_2015 = cur.fetchall()
+
     print("Records with failure landing outcomes in 2015:")
-    for result in results:
-        print(result)
+    if failure_records_2015:
+        for record in failure_records_2015:
+            print(record)
+    else:
+        print("No failure landing outcomes found for the year 2015.")
 
     # Rank the count of landing outcomes between 2010-06-04 and 2017-03-20
     cur.execute("""
