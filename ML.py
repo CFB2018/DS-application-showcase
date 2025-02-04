@@ -304,3 +304,31 @@ for model, accuracy in model_accuracies.items():
     print("{}: Test Accuracy = {:.2f}".format(model, accuracy))
 
 print("\nBest Performing Model: {} with Test Accuracy = {:.2f}".format(best_model, best_accuracy))
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# Define the model performance data
+model_accuracies = {
+    'Logistic Regression': 0.94,
+    'Decision Tree': 0.44,
+    'KNN': 0.78,
+    'SVM': 0.89
+}
+
+# Convert data to DataFrame
+df_bar = pd.DataFrame(list(model_accuracies.items()), columns=['Model', 'Accuracy'])
+
+# Create the barplot
+plt.figure(figsize=(12, 6))
+sns.barplot(x='Model', y='Accuracy', data=df_bar, order=df_bar.sort_values('Accuracy', ascending=False)['Model'])
+
+# Title and labels
+plt.title("Accuracies per Model", fontsize=20)
+plt.xlabel("Models", fontsize=14)
+plt.ylabel("Accuracy", fontsize=14)
+
+# Display the plot
+plt.tight_layout()
+plt.show()
