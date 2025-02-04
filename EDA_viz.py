@@ -33,6 +33,18 @@ plt.ylabel("Launch Site", fontsize=14)
 plt.tight_layout()
 plt.show()
 
+# Scatterplot Flight number and Launch site
+plt.figure(figsize=(12, 6))
+sns.scatterplot(x="FlightNumber", y="LaunchSite", data=df, alpha=0.7)
+plt.title("Number of Flights by Launch Site", fontsize=20)
+plt.xlabel("Number of Flights", fontsize=14)
+plt.ylabel("Launch Site", fontsize=14)
+plt.tight_layout()
+plt.show()
+
+
+
+
 # View the relationship between Payload mass and Launch site
 plt.figure(figsize=(12,6))
 sns.scatterplot(x="PayloadMass", y="LaunchSite", hue="Class", data=df, palette="deep", s=100, alpha=0.7)
