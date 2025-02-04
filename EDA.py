@@ -67,7 +67,8 @@ with sqlite3.connect("spacex.db") as conn:
     """)
     first_successful_landing_date = cur.fetchone()[0]
     print("Date of the first successful landing outcome: {}".format(first_successful_landing_date))
-
+    
+    # List successful drone ship landings and payload mass btw 4000-6000kg. 
     cur.execute("""
         SELECT DISTINCT Booster_Version 
         FROM spacex 
@@ -83,36 +84,38 @@ with sqlite3.connect("spacex.db") as conn:
     else:
         print("No matching boosters found.")
 
-    cur.execute("SELECT DISTINCT Landing_Outcome FROM spacex")
-    print(cur.fetchall())  
+ #   cur.execute("SELECT DISTINCT Landing_Outcome FROM spacex")
+ #   print(cur.fetchall())  #[('Failure (parachute)',), ('No attempt',), ('Uncontrolled (ocean)',), ('Controlled (ocean)',), ('Fai'Success',), ('Failure',), ('No attempt ',)]
 
-    cur.execute("SELECT MIN(PAYLOAD_MASS__KG_), MAX(PAYLOAD_MASS__KG_) FROM spacex")
-    print(cur.fetchall())  
+ #   cur.execute("SELECT MIN(PAYLOAD_MASS__KG_), MAX(PAYLOAD_MASS__KG_) FROM spacex")
+ #   print(cur.fetchall())  #[(0, 15600)]
 
-    cur.execute("SELECT DISTINCT Booster_Version FROM spacex")
-    print(cur.fetchall())  
-
-    # List names of boosters with successful drone ship landings and payload mass between 4000 and 6000
+ #   cur.execute("SELECT DISTINCT Booster_Version FROM spacex")
+ #   print(cur.fetchall())  
+       
+          
+    # Count number of successful and failure mission outcomes
+    # The Landing_Outcome column contains inconsistent data. Clean the data.
     cur.execute("""
-        SELECT DISTINCT Booster_Version 
-        FROM spacex 
-        WHERE Landing_Outcome LIKE '%Success (drone ship)%'
-        AND CAST(PAYLOAD_MASS__KG_ AS FLOAT) BETWEEN 4000 AND 6000
+        UPDATE spacex
+        SET "Landing_Outcome" = TRIM("Landing_Outcome");
+      """)
+    cur.execute("""
+        UPDATE spacex
+        SET "Landing_Outcome" = 'Success'
+        WHERE "Landing_Outcome" LIKE '%Success%';
+    """)
+    cur.execute("""
+        UPDATE spacex
+        SET "Landing_Outcome" = 'Failure'
+        WHERE "Landing_Outcome" LIKE '%Failure%';
     """)
     
-    successful_boosters = cur.fetchall()
-
-    # Print the names of the successful boosters
-    print("Boosters with successful drone ship landings and payload mass between 4000 and 6000:")
-    for booster in successful_boosters:
-        print(booster[0])
-        
-    # Count number of successful and failure mission outcomes
     cur.execute("""
-        SELECT TRIM("Booster landing") AS landing, COUNT(*) AS total
+        SELECT LOWER(TRIM("Landing_Outcome")) AS landing, COUNT(*) AS total
         FROM spacex
-        WHERE TRIM("Booster landing") IN ('Success', 'Failure')
-        GROUP BY TRIM("Booster landing")
+        WHERE LOWER(TRIM("Landing_Outcome")) IN ('success', 'failure')
+        GROUP BY LOWER(TRIM("Landing_Outcome"))
     """)
     outcomes = cur.fetchall()
     
@@ -120,11 +123,15 @@ with sqlite3.connect("spacex.db") as conn:
     failed_count = 0
     
     for outcome in outcomes:
-        if "Success" in outcome[0]:
+        if outcome[0] == 'success':
             successful_count += outcome[1]
-        elif "Failure" in outcome[0]:
+        elif outcome[0] == 'failure':
             failed_count += outcome[1]
     print("Successful outcome: {} and Failed outcome: {}".format(successful_count, failed_count))
+    
+    
+    
+    
     
     # List the names of the booster versions which have carried max payload mass
     cur.execute("""
@@ -139,6 +146,8 @@ with sqlite3.connect("spacex.db") as conn:
     print("Booster versions that have carried the maximum payload mass:")
     for version in booster_versions:
         print(version[0])
+    
+    
     
     # List the records which display the month, failure landing_outcomes, booster version, launch_site in year 2015
     cur.execute("""
