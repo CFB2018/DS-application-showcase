@@ -129,16 +129,12 @@ with sqlite3.connect("spacex.db") as conn:
             failed_count += outcome[1]
     print("Successful outcome: {} and Failed outcome: {}".format(successful_count, failed_count))
     
-    
-    
-    
-    
-    # List the names of the booster versions which have carried max payload mass
+    # List the names of the booster versions which have carried max payload mass.
     cur.execute("""
-        SELECT DISTINCT "Version Booster"
+        SELECT DISTINCT "Booster_Version"
         FROM spacex
-        WHERE CAST("Payload mass" AS FLOAT) = (
-            SELECT MAX(CAST("Payload mass" AS FLOAT))
+        WHERE CAST("PAYLOAD_MASS__KG_" AS FLOAT) = (
+            SELECT MAX(CAST("PAYLOAD_MASS__KG_" AS FLOAT))
             FROM spacex
         )
     """)
