@@ -2,8 +2,8 @@
 """
 Launch Site Locations Analysis
 
-Investigate which locations have the highest success rate using interactive visual analytics.
-Follow up on the prelim correlations btw the launch site and success rate found in the spaceX launch dataset.
+Investigate which locations have the highest success rate using Interactive Visual Analytics.
+Follow up on the prelim. correlations btw the launch site and success rate.
 """
 
 # Import necessary libraries
